@@ -2,12 +2,18 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TextChatService = game:GetService("TextChatService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 
 local lp = Players.LocalPlayer
-local stashPos = Vector3.new(1234527, 1232974, 1234405)
-local PLATFORM_NAME = "Stash_Education_Platform"
 
+-- PLATFORM CONFIGURATIONS
+local PLATFORMS = {
+    [1] = {Pos = Vector3.new(1234527, 1232974, 1234405), Name = "Stash_Platform_1"},
+    [2] = {Pos = Vector3.new(1235527, 1232974, 1235405), Name = "Stash_Platform_2"}
+}
+
+local activePlatformIdx = 1
 local customSpawnEnabled = false
 local CLONE_COUNT = 1
 local REPEAT_DELAY = 7
@@ -16,7 +22,7 @@ local GRAB_RANGE = 100
 local currentDir = "North"
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MasterStashV17"
+ScreenGui.Name = "MasterStashV22"
 ScreenGui.ResetOnSpawn = false
 pcall(function() ScreenGui.Parent = CoreGui end)
 if not ScreenGui.Parent then ScreenGui.Parent = lp:WaitForChild("PlayerGui") end
@@ -40,7 +46,7 @@ MainButton.Parent = MainFrame
 Instance.new("UICorner", MainButton)
 
 local MenuFrame = Instance.new("Frame")
-MenuFrame.Size = UDim2.new(1, 0, 0, 240)
+MenuFrame.Size = UDim2.new(1, 0, 0, 270)
 MenuFrame.Position = UDim2.new(0, 0, 1.1, 0)
 MenuFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MenuFrame.Visible = false
@@ -61,11 +67,12 @@ local function CreateBtn(txt, pos, color)
     return b
 end
 
-local TPBtn = CreateBtn("TP & BUILD PLATFORM", UDim2.new(0.05, 0, 0.05, 0), Color3.fromRGB(0, 100, 60))
-local SpawnBtn = CreateBtn("CUSTOM SPAWN: OFF", UDim2.new(0.05, 0, 0.18, 0), Color3.fromRGB(60, 60, 60))
-local UnstashBtn = CreateBtn("UNSTASH (GRAB TOOLS)", UDim2.new(0.05, 0, 0.31, 0), Color3.fromRGB(130, 40, 40))
-local DirBtn = CreateBtn("SIDE: NORTH", UDim2.new(0.05, 0, 0.44, 0), Color3.fromRGB(80, 40, 120))
-local OrbitBtn = CreateBtn("LOAD SUPER RING V4", UDim2.new(0.05, 0, 0.57, 0), Color3.fromRGB(153, 0, 0))
+local PlatformBtn = CreateBtn("TARGET PLATFORM: 1", UDim2.new(0.05, 0, 0.05, 0), Color3.fromRGB(100, 100, 0))
+local TPBtn = CreateBtn("TP & BUILD ALL PLATFORMS", UDim2.new(0.05, 0, 0.16, 0), Color3.fromRGB(0, 100, 60))
+local SpawnBtn = CreateBtn("CUSTOM SPAWN: OFF", UDim2.new(0.05, 0, 0.27, 0), Color3.fromRGB(60, 60, 60))
+local UnstashBtn = CreateBtn("UNSTASH (GRAB TOOLS)", UDim2.new(0.05, 0, 0.38, 0), Color3.fromRGB(130, 40, 40))
+local DirBtn = CreateBtn("SIDE: NORTH", UDim2.new(0.05, 0, 0.49, 0), Color3.fromRGB(80, 40, 120))
+local OrbitBtn = CreateBtn("LOAD SUPER RING V4", UDim2.new(0.05, 0, 0.60, 0), Color3.fromRGB(153, 0, 0))
 
 local InputBox = Instance.new("TextBox")
 InputBox.Size = UDim2.new(0.4, 0, 0, 25)
@@ -77,14 +84,13 @@ InputBox.Text = "1"
 InputBox.Parent = MenuFrame
 Instance.new("UICorner", InputBox)
 
--- Input Validation Logic
+-- Input Verification: Strictly 1-15, else reset to 1
 InputBox.FocusLost:Connect(function()
     local val = tonumber(InputBox.Text)
     if val and val >= 1 and val <= 15 then
         CLONE_COUNT = math.floor(val)
         InputBox.Text = tostring(CLONE_COUNT)
     else
-        -- Resets to 1 if empty, too high, too low, or a random word
         CLONE_COUNT = 1
         InputBox.Text = "1"
     end
@@ -99,15 +105,27 @@ local function Say(msg)
     task.wait(CHAT_DELAY)
 end
 
-local function EnsurePlatform()
-    local p = workspace:FindFirstChild(PLATFORM_NAME)
-    if not p then
-        p = Instance.new("Part", workspace)
-        p.Name = PLATFORM_NAME; p.Size = Vector3.new(200, 1, 200)
-        p.Position = stashPos; p.Anchored = true
+-- NEW: LOGIC TO ENSURE ALL PLATFORMS ARE BUILT
+local function BuildAllPlatforms()
+    for _, data in pairs(PLATFORMS) do
+        local p = workspace:FindFirstChild(data.Name)
+        if not p then
+            p = Instance.new("Part", workspace)
+            p.Name = data.Name
+            p.Size = Vector3.new(200, 1, 200)
+            p.Position = data.Pos
+            p.Anchored = true
+            p.Material = Enum.Material.SmoothPlastic
+            p.Color = Color3.fromRGB(50, 50, 50)
+        end
     end
-    return p
 end
+
+-- BUTTON ACTIONS
+PlatformBtn.MouseButton1Click:Connect(function()
+    activePlatformIdx = (activePlatformIdx == 1) and 2 or 1
+    PlatformBtn.Text = "TARGET PLATFORM: " .. activePlatformIdx
+end)
 
 OrbitBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Lukashub-coder/super-ring/refs/heads/main/Super%20ring!!"))()
@@ -125,7 +143,9 @@ MainButton.MouseButton1Click:Connect(function()
     if MenuFrame.Visible then return end
     local char = lp.Character
     if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-    EnsurePlatform()
+    
+    BuildAllPlatforms() -- MANDATORY: Builds BOTH platforms immediately 
+    local data = PLATFORMS[activePlatformIdx]
     
     for i = 1, CLONE_COUNT do
         local row = math.floor((i-1) / 5)
@@ -136,10 +156,10 @@ MainButton.MouseButton1Click:Connect(function()
         local gridZ = row * 15
         local finalPos, faceAngle
         
-        if currentDir == "North" then finalPos = stashPos + Vector3.new(gridX, 5, -80 + gridZ); faceAngle = 180
-        elseif currentDir == "South" then finalPos = stashPos + Vector3.new(-gridX, 5, 80 - gridZ); faceAngle = 0
-        elseif currentDir == "East" then finalPos = stashPos + Vector3.new(80 - gridZ, 5, gridX); faceAngle = 90
-        elseif currentDir == "West" then finalPos = stashPos + Vector3.new(-80 + gridZ, 5, -gridX); faceAngle = -90 end
+        if currentDir == "North" then finalPos = data.Pos + Vector3.new(gridX, 5, -80 + gridZ); faceAngle = 180
+        elseif currentDir == "South" then finalPos = data.Pos + Vector3.new(-gridX, 5, 80 - gridZ); faceAngle = 0
+        elseif currentDir == "East" then finalPos = data.Pos + Vector3.new(80 - gridZ, 5, gridX); faceAngle = 90
+        elseif currentDir == "West" then finalPos = data.Pos + Vector3.new(-80 + gridZ, 5, -gridX); faceAngle = -90 end
 
         char.HumanoidRootPart.CFrame = CFrame.new(finalPos) * CFrame.Angles(0, math.rad(faceAngle), 0)
         task.wait(0.5)
@@ -149,8 +169,8 @@ MainButton.MouseButton1Click:Connect(function()
         Say(";freeze me")
         Say(";clone me")
         
-        -- TP THEN UNFREEZE
-        char.HumanoidRootPart.CFrame = CFrame.new(stashPos + Vector3.new(0, 10, 0))
+        -- STRICT SEQUENCE: TP THEN UNFREEZE
+        char.HumanoidRootPart.CFrame = CFrame.new(data.Pos + Vector3.new(0, 10, 0))
         task.wait(0.5)
         Say(";unfreeze me")
         
@@ -191,15 +211,17 @@ end)
 
 lp.CharacterAdded:Connect(function(char)
     if customSpawnEnabled then
+        local data = PLATFORMS[activePlatformIdx]
         local hrp = char:WaitForChild("HumanoidRootPart", 5)
-        if hrp then task.wait(0.6); hrp.CFrame = CFrame.new(stashPos + Vector3.new(0, 5, 0)) end
+        if hrp then task.wait(0.6); hrp.CFrame = CFrame.new(data.Pos + Vector3.new(0, 5, 0)) end
     end
 end)
 
 TPBtn.MouseButton1Click:Connect(function() 
-    EnsurePlatform()
+    BuildAllPlatforms() -- Builds BOTH platforms 
+    local data = PLATFORMS[activePlatformIdx]
     if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
-        lp.Character.HumanoidRootPart.CFrame = CFrame.new(stashPos + Vector3.new(0, 5, 0))
+        lp.Character.HumanoidRootPart.CFrame = CFrame.new(data.Pos + Vector3.new(0, 5, 0))
     end
 end)
 
