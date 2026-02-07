@@ -9,13 +9,14 @@ local stashPos = Vector3.new(1234527, 1232974, 1234405)
 local PLATFORM_NAME = "Stash_Education_Platform"
 
 local customSpawnEnabled = false
-local CLONE_COUNT = 6
+local CLONE_COUNT = 1
 local REPEAT_DELAY = 7
 local CHAT_DELAY = 1.8
 local GRAB_RANGE = 100
+local currentDir = "North"
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MasterStashV8"
+ScreenGui.Name = "MasterStashV17"
 ScreenGui.ResetOnSpawn = false
 pcall(function() ScreenGui.Parent = CoreGui end)
 if not ScreenGui.Parent then ScreenGui.Parent = lp:WaitForChild("PlayerGui") end
@@ -38,17 +39,8 @@ MainButton.Font = Enum.Font.GothamBold
 MainButton.Parent = MainFrame
 Instance.new("UICorner", MainButton)
 
-local ResizeHandle = Instance.new("TextButton")
-ResizeHandle.Size = UDim2.new(0, 20, 0, 20)
-ResizeHandle.Position = UDim2.new(1, -20, 1, -20)
-ResizeHandle.BackgroundTransparency = 1
-ResizeHandle.Text = "◢"
-ResizeHandle.TextColor3 = Color3.new(0.5, 0.5, 0.5)
-ResizeHandle.ZIndex = 10
-ResizeHandle.Parent = MainFrame
-
 local MenuFrame = Instance.new("Frame")
-MenuFrame.Size = UDim2.new(1, 0, 0, 180)
+MenuFrame.Size = UDim2.new(1, 0, 0, 240)
 MenuFrame.Position = UDim2.new(0, 0, 1.1, 0)
 MenuFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MenuFrame.Visible = false
@@ -70,30 +62,33 @@ local function CreateBtn(txt, pos, color)
 end
 
 local TPBtn = CreateBtn("TP & BUILD PLATFORM", UDim2.new(0.05, 0, 0.05, 0), Color3.fromRGB(0, 100, 60))
-local SpawnBtn = CreateBtn("CUSTOM SPAWN: OFF", UDim2.new(0.05, 0, 0.25, 0), Color3.fromRGB(60, 60, 60))
-local UnstashBtn = CreateBtn("UNSTASH (GRAB TOOLS)", UDim2.new(0.05, 0, 0.45, 0), Color3.fromRGB(130, 40, 40))
+local SpawnBtn = CreateBtn("CUSTOM SPAWN: OFF", UDim2.new(0.05, 0, 0.18, 0), Color3.fromRGB(60, 60, 60))
+local UnstashBtn = CreateBtn("UNSTASH (GRAB TOOLS)", UDim2.new(0.05, 0, 0.31, 0), Color3.fromRGB(130, 40, 40))
+local DirBtn = CreateBtn("SIDE: NORTH", UDim2.new(0.05, 0, 0.44, 0), Color3.fromRGB(80, 40, 120))
+local OrbitBtn = CreateBtn("LOAD SUPER RING V4", UDim2.new(0.05, 0, 0.57, 0), Color3.fromRGB(153, 0, 0))
 
 local InputBox = Instance.new("TextBox")
 InputBox.Size = UDim2.new(0.4, 0, 0, 25)
-InputBox.Position = UDim2.new(0.3, 0, 0.7, 0)
+InputBox.Position = UDim2.new(0.3, 0, 0.75, 0)
 InputBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 InputBox.TextColor3 = Color3.new(1, 1, 1)
-InputBox.Text = "6"
-InputBox.PlaceholderText = "1-15"
+InputBox.PlaceholderText = "1-15 Clones"
+InputBox.Text = "1"
 InputBox.Parent = MenuFrame
 Instance.new("UICorner", InputBox)
 
-local function EnsurePlatform()
-    local p = workspace:FindFirstChild(PLATFORM_NAME)
-    if not p then
-        p = Instance.new("Part", workspace)
-        p.Name = PLATFORM_NAME
-        p.Size = Vector3.new(200, 1, 200)
-        p.Position = stashPos
-        p.Anchored = true
+-- Input Validation Logic
+InputBox.FocusLost:Connect(function()
+    local val = tonumber(InputBox.Text)
+    if val and val >= 1 and val <= 15 then
+        CLONE_COUNT = math.floor(val)
+        InputBox.Text = tostring(CLONE_COUNT)
+    else
+        -- Resets to 1 if empty, too high, too low, or a random word
+        CLONE_COUNT = 1
+        InputBox.Text = "1"
     end
-    return p
-end
+end)
 
 local function Say(msg)
     local chat = TextChatService:FindFirstChild("TextChannels") and TextChatService.TextChannels:FindFirstChild("RBXGeneral")
@@ -104,44 +99,26 @@ local function Say(msg)
     task.wait(CHAT_DELAY)
 end
 
-local function GrabTools()
-    local char = lp.Character
-    if not char then return end
-    local bucket = char:FindFirstChild("BlueBucket") or char:FindFirstChildOfClass("Tool")
-    for _, item in pairs(workspace:GetChildren()) do
-        if item:IsA("Tool") or (item:IsA("Part") and item:FindFirstChildOfClass("TouchTransmitter")) then
-            local root = char:FindFirstChild("HumanoidRootPart")
-            if root and (root.Position - item:GetPivot().Position).Magnitude <= GRAB_RANGE then
-                item.Parent = bucket or char
-            end
-        end
+local function EnsurePlatform()
+    local p = workspace:FindFirstChild(PLATFORM_NAME)
+    if not p then
+        p = Instance.new("Part", workspace)
+        p.Name = PLATFORM_NAME; p.Size = Vector3.new(200, 1, 200)
+        p.Position = stashPos; p.Anchored = true
     end
+    return p
 end
 
-lp.CharacterAdded:Connect(function(char)
-    if customSpawnEnabled then
-        local hrp = char:WaitForChild("HumanoidRootPart", 5)
-        if hrp then task.wait(0.5); hrp.CFrame = CFrame.new(stashPos + Vector3.new(0, 5, 0)) end
-    end
+OrbitBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Lukashub-coder/super-ring/refs/heads/main/Super%20ring!!"))()
+    OrbitBtn.Text = "SUPER RING LOADED"
 end)
 
-SpawnBtn.MouseButton1Click:Connect(function()
-    customSpawnEnabled = not customSpawnEnabled
-    EnsurePlatform()
-    SpawnBtn.Text = customSpawnEnabled and "CUSTOM SPAWN: ON" or "CUSTOM SPAWN: OFF"
-    SpawnBtn.BackgroundColor3 = customSpawnEnabled and Color3.fromRGB(0, 120, 200) or Color3.fromRGB(60, 60, 60)
-end)
-
-TPBtn.MouseButton1Click:Connect(function()
-    EnsurePlatform()
-    if lp.Character then lp.Character.HumanoidRootPart.CFrame = CFrame.new(stashPos + Vector3.new(0, 5, 0)) end
-end)
-
-UnstashBtn.MouseButton1Click:Connect(function()
-    UnstashBtn.Text = "COLLECTING..."
-    local endT = tick() + 1.2
-    while tick() < endT do GrabTools(); task.wait(0.1) end
-    UnstashBtn.Text = "UNSTASH (GRAB TOOLS)"
+DirBtn.MouseButton1Click:Connect(function()
+    local dirs = {"North", "East", "South", "West"}
+    local idx = table.find(dirs, currentDir) or 1
+    currentDir = dirs[idx % 4 + 1]
+    DirBtn.Text = "SIDE: " .. currentDir:upper()
 end)
 
 MainButton.MouseButton1Click:Connect(function()
@@ -149,43 +126,98 @@ MainButton.MouseButton1Click:Connect(function()
     local char = lp.Character
     if not char or not char:FindFirstChild("HumanoidRootPart") then return end
     EnsurePlatform()
+    
     for i = 1, CLONE_COUNT do
         local row = math.floor((i-1) / 5)
         local col = (i-1) % 5
         if row % 2 == 1 then col = 4 - col end
-        local tPos = stashPos + Vector3.new(col * 15 - 30, 5, row * 15 - 40)
-        char.HumanoidRootPart.CFrame = CFrame.new(tPos) * CFrame.Angles(0, math.rad(180), 0)
+        
+        local gridX = col * 15 - 30
+        local gridZ = row * 15
+        local finalPos, faceAngle
+        
+        if currentDir == "North" then finalPos = stashPos + Vector3.new(gridX, 5, -80 + gridZ); faceAngle = 180
+        elseif currentDir == "South" then finalPos = stashPos + Vector3.new(-gridX, 5, 80 - gridZ); faceAngle = 0
+        elseif currentDir == "East" then finalPos = stashPos + Vector3.new(80 - gridZ, 5, gridX); faceAngle = 90
+        elseif currentDir == "West" then finalPos = stashPos + Vector3.new(-80 + gridZ, 5, -gridX); faceAngle = -90 end
+
+        char.HumanoidRootPart.CFrame = CFrame.new(finalPos) * CFrame.Angles(0, math.rad(faceAngle), 0)
         task.wait(0.5)
         for _, t in pairs(lp.Backpack:GetChildren()) do if t:IsA("Tool") then t.Parent = char end end
         task.wait(0.3)
-        Say(";freeze me"); Say(";clone me")
+        
+        Say(";freeze me")
+        Say(";clone me")
+        
+        -- TP THEN UNFREEZE
         char.HumanoidRootPart.CFrame = CFrame.new(stashPos + Vector3.new(0, 10, 0))
-        task.wait(0.5); Say(";unfreeze me")
-        for cd = REPEAT_DELAY, 1, -1 do MainButton.Text = "WAIT: "..cd.."s"; task.wait(1) end
+        task.wait(0.5)
+        Say(";unfreeze me")
+        
+        for cd = REPEAT_DELAY, 1, -1 do 
+            MainButton.Text = "WAIT: "..cd.."s"
+            task.wait(1) 
+        end
     end
     MainButton.Text = "L: START | R: MENU"
 end)
 
-MainButton.MouseButton2Click:Connect(function() MenuFrame.Visible = not MenuFrame.Visible end)
-
-InputBox.FocusLost:Connect(function()
-    local n = tonumber(InputBox.Text)
-    if n and n >= 1 and n <= 15 then CLONE_COUNT = n else InputBox.Text = tostring(CLONE_COUNT) end
+UnstashBtn.MouseButton1Click:Connect(function()
+    UnstashBtn.Text = "COLLECTING..."
+    local endT = tick() + 1.2
+    while tick() < endT do 
+        local char = lp.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local bucket = char:FindFirstChild("BlueBucket") or char:FindFirstChildOfClass("Tool")
+            for _, item in pairs(workspace:GetChildren()) do
+                if (item:IsA("Tool") or item:FindFirstChildOfClass("TouchTransmitter")) then
+                    if (hrp.Position - item:GetPivot().Position).Magnitude <= GRAB_RANGE then
+                        item.Parent = bucket or char
+                    end
+                end
+            end
+        end
+        task.wait(0.1) 
+    end
+    UnstashBtn.Text = "UNSTASH (GRAB TOOLS)"
 end)
 
+SpawnBtn.MouseButton1Click:Connect(function()
+    customSpawnEnabled = not customSpawnEnabled
+    SpawnBtn.Text = customSpawnEnabled and "CUSTOM SPAWN: ON" or "CUSTOM SPAWN: OFF"
+    SpawnBtn.BackgroundColor3 = customSpawnEnabled and Color3.fromRGB(0, 120, 200) or Color3.fromRGB(60, 60, 60)
+end)
+
+lp.CharacterAdded:Connect(function(char)
+    if customSpawnEnabled then
+        local hrp = char:WaitForChild("HumanoidRootPart", 5)
+        if hrp then task.wait(0.6); hrp.CFrame = CFrame.new(stashPos + Vector3.new(0, 5, 0)) end
+    end
+end)
+
+TPBtn.MouseButton1Click:Connect(function() 
+    EnsurePlatform()
+    if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+        lp.Character.HumanoidRootPart.CFrame = CFrame.new(stashPos + Vector3.new(0, 5, 0))
+    end
+end)
+
+MainButton.MouseButton2Click:Connect(function() MenuFrame.Visible = not MenuFrame.Visible end)
+
 local function InitUI()
-    local d, r, dS, rS, sP, sS
-    MainFrame.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then d = true dS = i.Position sP = MainFrame.Position end end)
-    ResizeHandle.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then r = true rS = i.Position sS = MainFrame.Size end end)
-    UserInputService.InputChanged:Connect(function(i)
-        if d and i.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = i.Position - dS
-            MainFrame.Position = UDim2.new(sP.X.Scale, sP.X.Offset + delta.X, sP.Y.Scale, sP.Y.Offset + delta.Y)
-        elseif r and i.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = i.Position - rS
-            MainFrame.Size = UDim2.new(0, math.max(180, sS.X.Offset + delta.X), 0, math.max(60, sS.Y.Offset + delta.Y))
+    local dragging, dragStart, startPos
+    MainFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true; dragStart = input.Position; startPos = MainFrame.Position
         end
     end)
-    UserInputService.InputEnded:Connect(function() d = false r = false end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function() dragging = false end)
 end
 InitUI()
