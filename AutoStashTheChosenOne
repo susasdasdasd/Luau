@@ -1,3 +1,12 @@
+--[[
+    MasterStash V26.1 - Integrated Edition
+    Features: 
+    - Auto-Gear (;gear me 25162389)
+    - Dual Smooth Black Platforms
+    - Toggle Start/Stop Logic
+    - Super Ring V4 + Extra Ring (Pastebin)
+]]
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TextChatService = game:GetService("TextChatService")
@@ -5,7 +14,23 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local CoreGui = game:GetService("CoreGui")
 
+-- Safety: Ensure LocalPlayer and PlayerGui are ready
 local lp = Players.LocalPlayer
+while not lp do task.wait() lp = Players.LocalPlayer end
+local pGui = lp:WaitForChild("PlayerGui")
+
+-- Clean up old UI versions
+local existing = CoreGui:FindFirstChild("MasterStashV26") or pGui:FindFirstChild("MasterStashV26")
+if existing then existing:Destroy() end
+
+-- UI Container
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "MasterStashV26"
+ScreenGui.ResetOnSpawn = false
+
+-- Fallback parenting for executors
+local success, _ = pcall(function() ScreenGui.Parent = CoreGui end)
+if not success then ScreenGui.Parent = pGui end
 
 -- PLATFORM CONFIGURATIONS
 local PLATFORMS = {
@@ -20,13 +45,23 @@ local REPEAT_DELAY = 7
 local CHAT_DELAY = 1.8
 local GRAB_RANGE = 100
 local currentDir = "North"
+local isStashing = false
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "MasterStashV22"
-ScreenGui.ResetOnSpawn = false
-pcall(function() ScreenGui.Parent = CoreGui end)
-if not ScreenGui.Parent then ScreenGui.Parent = lp:WaitForChild("PlayerGui") end
+-- SHARED NETWORK SETTINGS (Required for Rings)
+if not getgenv().Network then
+    getgenv().Network = {
+        BaseParts = {},
+        Velocity = Vector3.new(14.46, 14.46, 14.46)
+    }
+    RunService.Heartbeat:Connect(function()
+        sethiddenproperty(lp, "SimulationRadius", math.huge)
+        for _, Part in pairs(getgenv().Network.BaseParts) do
+            if Part:IsDescendantOf(workspace) then Part.Velocity = getgenv().Network.Velocity end
+        end
+    end)
+end
 
+-- MAIN UI ELEMENTS
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 260, 0, 70)
 MainFrame.Position = UDim2.new(0.5, -130, 0.4, 0)
@@ -46,7 +81,7 @@ MainButton.Parent = MainFrame
 Instance.new("UICorner", MainButton)
 
 local MenuFrame = Instance.new("Frame")
-MenuFrame.Size = UDim2.new(1, 0, 0, 270)
+MenuFrame.Size = UDim2.new(1, 0, 0, 310) 
 MenuFrame.Position = UDim2.new(0, 0, 1.1, 0)
 MenuFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MenuFrame.Visible = false
@@ -67,16 +102,18 @@ local function CreateBtn(txt, pos, color)
     return b
 end
 
+-- MENU BUTTONS
 local PlatformBtn = CreateBtn("TARGET PLATFORM: 1", UDim2.new(0.05, 0, 0.05, 0), Color3.fromRGB(100, 100, 0))
-local TPBtn = CreateBtn("TP & BUILD ALL PLATFORMS", UDim2.new(0.05, 0, 0.16, 0), Color3.fromRGB(0, 100, 60))
-local SpawnBtn = CreateBtn("CUSTOM SPAWN: OFF", UDim2.new(0.05, 0, 0.27, 0), Color3.fromRGB(60, 60, 60))
-local UnstashBtn = CreateBtn("UNSTASH (GRAB TOOLS)", UDim2.new(0.05, 0, 0.38, 0), Color3.fromRGB(130, 40, 40))
-local DirBtn = CreateBtn("SIDE: NORTH", UDim2.new(0.05, 0, 0.49, 0), Color3.fromRGB(80, 40, 120))
-local OrbitBtn = CreateBtn("LOAD SUPER RING V4", UDim2.new(0.05, 0, 0.60, 0), Color3.fromRGB(153, 0, 0))
+local TPBtn = CreateBtn("TP & BUILD ALL PLATFORMS", UDim2.new(0.05, 0, 0.15, 0), Color3.fromRGB(0, 100, 60))
+local SpawnBtn = CreateBtn("CUSTOM SPAWN: OFF", UDim2.new(0.05, 0, 0.25, 0), Color3.fromRGB(60, 60, 60))
+local UnstashBtn = CreateBtn("UNSTASH (GRAB TOOLS)", UDim2.new(0.05, 0, 0.35, 0), Color3.fromRGB(130, 40, 40))
+local DirBtn = CreateBtn("SIDE: NORTH", UDim2.new(0.05, 0, 0.45, 0), Color3.fromRGB(80, 40, 120))
+local OrbitBtn = CreateBtn("LOAD SUPER RING V4", UDim2.new(0.05, 0, 0.55, 0), Color3.fromRGB(153, 0, 0))
+local ExtraRingBtn = CreateBtn("LOAD EXTRA RING (PASTEBIN)", UDim2.new(0.05, 0, 0.65, 0), Color3.fromRGB(0, 80, 150))
 
 local InputBox = Instance.new("TextBox")
 InputBox.Size = UDim2.new(0.4, 0, 0, 25)
-InputBox.Position = UDim2.new(0.3, 0, 0.75, 0)
+InputBox.Position = UDim2.new(0.3, 0, 0.82, 0)
 InputBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 InputBox.TextColor3 = Color3.new(1, 1, 1)
 InputBox.PlaceholderText = "1-15 Clones"
@@ -84,28 +121,7 @@ InputBox.Text = "1"
 InputBox.Parent = MenuFrame
 Instance.new("UICorner", InputBox)
 
--- Input Verification: Strictly 1-15, else reset to 1
-InputBox.FocusLost:Connect(function()
-    local val = tonumber(InputBox.Text)
-    if val and val >= 1 and val <= 15 then
-        CLONE_COUNT = math.floor(val)
-        InputBox.Text = tostring(CLONE_COUNT)
-    else
-        CLONE_COUNT = 1
-        InputBox.Text = "1"
-    end
-end)
-
-local function Say(msg)
-    local chat = TextChatService:FindFirstChild("TextChannels") and TextChatService.TextChannels:FindFirstChild("RBXGeneral")
-    if chat then chat:SendAsync(msg) else
-        local r = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
-        if r then r.SayMessageRequest:FireServer(msg, "All") end
-    end
-    task.wait(CHAT_DELAY)
-end
-
--- NEW: LOGIC TO ENSURE ALL PLATFORMS ARE BUILT
+-- LOGIC FUNCTIONS
 local function BuildAllPlatforms()
     for _, data in pairs(PLATFORMS) do
         local p = workspace:FindFirstChild(data.Name)
@@ -116,12 +132,27 @@ local function BuildAllPlatforms()
             p.Position = data.Pos
             p.Anchored = true
             p.Material = Enum.Material.SmoothPlastic
-            p.Color = Color3.fromRGB(50, 50, 50)
+            p.Color = Color3.fromRGB(0, 0, 0)
         end
     end
 end
 
--- BUTTON ACTIONS
+local function Say(msg)
+    local chat = TextChatService:FindFirstChild("TextChannels") and TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+    if chat then chat:SendAsync(msg) else
+        local r = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
+        if r then r.SayMessageRequest:FireServer(msg, "All") end
+    end
+    task.wait(CHAT_DELAY)
+end
+
+-- INTERACTIONS
+InputBox.FocusLost:Connect(function()
+    local val = tonumber(InputBox.Text)
+    if val and val >= 1 and val <= 15 then CLONE_COUNT = math.floor(val) else CLONE_COUNT = 1 end
+    InputBox.Text = tostring(CLONE_COUNT)
+end)
+
 PlatformBtn.MouseButton1Click:Connect(function()
     activePlatformIdx = (activePlatformIdx == 1) and 2 or 1
     PlatformBtn.Text = "TARGET PLATFORM: " .. activePlatformIdx
@@ -130,6 +161,11 @@ end)
 OrbitBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Lukashub-coder/super-ring/refs/heads/main/Super%20ring!!"))()
     OrbitBtn.Text = "SUPER RING LOADED"
+end)
+
+ExtraRingBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/QYUALL7N"))()
+    ExtraRingBtn.Text = "EXTRA RING LOADED"
 end)
 
 DirBtn.MouseButton1Click:Connect(function()
@@ -141,19 +177,22 @@ end)
 
 MainButton.MouseButton1Click:Connect(function()
     if MenuFrame.Visible then return end
+    if isStashing then isStashing = false; MainButton.Text = "STOPPING..."; return end
+
     local char = lp.Character
     if not char or not char:FindFirstChild("HumanoidRootPart") then return end
     
-    BuildAllPlatforms() -- MANDATORY: Builds BOTH platforms immediately 
+    isStashing = true
+    BuildAllPlatforms()
     local data = PLATFORMS[activePlatformIdx]
     
     for i = 1, CLONE_COUNT do
-        local row = math.floor((i-1) / 5)
-        local col = (i-1) % 5
-        if row % 2 == 1 then col = 4 - col end
+        if not isStashing then break end
+        Say(";gear me 25162389")
         
-        local gridX = col * 15 - 30
-        local gridZ = row * 15
+        local row, col = math.floor((i-1) / 5), (i-1) % 5
+        if row % 2 == 1 then col = 4 - col end
+        local gridX, gridZ = col * 15 - 30, row * 15
         local finalPos, faceAngle
         
         if currentDir == "North" then finalPos = data.Pos + Vector3.new(gridX, 5, -80 + gridZ); faceAngle = 180
@@ -166,20 +205,21 @@ MainButton.MouseButton1Click:Connect(function()
         for _, t in pairs(lp.Backpack:GetChildren()) do if t:IsA("Tool") then t.Parent = char end end
         task.wait(0.3)
         
+        if not isStashing then break end
         Say(";freeze me")
         Say(";clone me")
         
-        -- STRICT SEQUENCE: TP THEN UNFREEZE
         char.HumanoidRootPart.CFrame = CFrame.new(data.Pos + Vector3.new(0, 10, 0))
         task.wait(0.5)
         Say(";unfreeze me")
         
         for cd = REPEAT_DELAY, 1, -1 do 
-            MainButton.Text = "WAIT: "..cd.."s"
+            if not isStashing then break end
+            MainButton.Text = "WAIT: "..cd.."s (TAP TO STOP)"
             task.wait(1) 
         end
     end
-    MainButton.Text = "L: START | R: MENU"
+    isStashing = false; MainButton.Text = "L: START | R: MENU"
 end)
 
 UnstashBtn.MouseButton1Click:Connect(function()
@@ -189,11 +229,10 @@ UnstashBtn.MouseButton1Click:Connect(function()
         local char = lp.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
         if hrp then
-            local bucket = char:FindFirstChild("BlueBucket") or char:FindFirstChildOfClass("Tool")
             for _, item in pairs(workspace:GetChildren()) do
-                if (item:IsA("Tool") or item:FindFirstChildOfClass("TouchTransmitter")) then
+                if item:IsA("Tool") or item:FindFirstChildOfClass("TouchTransmitter") then
                     if (hrp.Position - item:GetPivot().Position).Magnitude <= GRAB_RANGE then
-                        item.Parent = bucket or char
+                        item.Parent = char
                     end
                 end
             end
@@ -218,7 +257,7 @@ lp.CharacterAdded:Connect(function(char)
 end)
 
 TPBtn.MouseButton1Click:Connect(function() 
-    BuildAllPlatforms() -- Builds BOTH platforms 
+    BuildAllPlatforms()
     local data = PLATFORMS[activePlatformIdx]
     if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
         lp.Character.HumanoidRootPart.CFrame = CFrame.new(data.Pos + Vector3.new(0, 5, 0))
@@ -227,6 +266,7 @@ end)
 
 MainButton.MouseButton2Click:Connect(function() MenuFrame.Visible = not MenuFrame.Visible end)
 
+-- UI DRAGGING
 local function InitUI()
     local dragging, dragStart, startPos
     MainFrame.InputBegan:Connect(function(input)
