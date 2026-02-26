@@ -1,4 +1,4 @@
--- HZ RECOVERY (v15)
+-- HZ RECOVERY (v18)
 -- [PERSONALIZED: FULL INTEGRITY | HEARTBEAT | PCALLS | UNDERSCORE NAMING]
 
 local _players = game:GetService('Players')
@@ -20,7 +20,8 @@ if not WHITELISTED_USERS[_LocalPlayer.UserId] then return end
 local _states = {
     vampire = false, myopic = false, glitch = false, cursed = false,
     maptide = false, freeze = false, jail = false, blind = false,
-    fling = false, speed = false, esp = false, gravity = false
+    fling = false, speed = false, esp = false, gravity = false,
+    toxic = false
 }
 
 local _stablePos = nil
@@ -56,7 +57,7 @@ local Scroll = Instance.new("ScrollingFrame", MainFrame)
 Scroll.Size = UDim2.new(1, 0, 1, -50)
 Scroll.Position = UDim2.new(0, 0, 0, 40)
 Scroll.BackgroundTransparency = 1
-Scroll.CanvasSize = UDim2.new(0, 0, 8.5, 0) -- Increased for new modules
+Scroll.CanvasSize = UDim2.new(0, 0, 9.5, 0)
 Scroll.ScrollBarThickness = 2
 
 local function createBtn(text, color)
@@ -89,6 +90,7 @@ local TpBtn = createBtn("Teleport", Color3.fromRGB(60, 60, 60))
 
 -- [FEATURE BUTTONS]
 local SpawnBtn   = createBtn("To Spawn", Color3.fromRGB(0, 120, 215))
+local ToxicBtn   = createBtn("Anti Toxic (Off)", Color3.fromRGB(130, 0, 0))
 local GravityBtn = createBtn("Anti Gravity (Off)", Color3.fromRGB(130, 0, 0))
 local FlingBtn   = createBtn("Anti Fling (Off)", Color3.fromRGB(130, 0, 0))
 local SpeedBtn   = createBtn("Anti Speed (Off)", Color3.fromRGB(130, 0, 0))
@@ -131,14 +133,27 @@ _runService.Heartbeat:Connect(function()
         local hum = char:FindFirstChildOfClass("Humanoid")
         if not root then return end
 
-        -- 1. ANTI GRAVITY (196.2 Force)
+        -- 1. ANTI TOXIC (Improved Animation Safety)
+        if _states.toxic then
+            local tox = char:FindFirstChild("Toxify")
+            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then
+                tox.Disabled = true
+            end
+        else
+            local tox = char:FindFirstChild("Toxify")
+            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then
+                tox.Disabled = false
+            end
+        end
+
+        -- 2. ANTI GRAVITY
         if _states.gravity then
             if math.abs(workspace.Gravity - 196.2) > 0.1 then
                 workspace.Gravity = 196.2
             end
         end
 
-        -- 2. ANTI FLING
+        -- 3. ANTI FLING
         if _states.fling then
             if root.AssemblyLinearVelocity.Magnitude > 150 or root.AssemblyAngularVelocity.Magnitude > 150 then
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -147,10 +162,10 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- 3. ANTI SPEED
+        -- 4. ANTI SPEED
         if _states.speed and hum then hum.WalkSpeed = 16 end
 
-        -- 4. ENLIGHTENED ESP
+        -- 5. ENLIGHTENED ESP
         if _states.esp then
             for _, p in pairs(_players:GetPlayers()) do
                 if p ~= _LocalPlayer and p.Character then
@@ -166,7 +181,7 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- 5. ANTI MAPTIDE
+        -- 6. ANTI MAPTIDE
         if _states.maptide then
             if root.Position.Y < -30 then 
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -175,7 +190,7 @@ _runService.Heartbeat:Connect(function()
             pcall(function() workspace.FallenPartsDestroyHeight = 0/0 end)
         end
 
-        -- 6. STABLE POS & ANTI GLITCH
+        -- 7. STABLE POS & ANTI GLITCH
         if tick() - _lastSnapTime > 0.5 then
             if root.AssemblyLinearVelocity.Magnitude < 50 then _stablePos = root.CFrame end
             _lastSnapTime = tick()
@@ -187,7 +202,7 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- 7. LEGACY HZ TOOLS
+        -- 8. LEGACY HZ TOOLS
         if _states.vampire then 
             workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
             if hum then workspace.CurrentCamera.CameraSubject = hum end
@@ -225,6 +240,7 @@ local function toggle(btn, key, name)
 end
 
 SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
+ToxicBtn.MouseButton1Click:Connect(function() toggle(ToxicBtn, "toxic", "Anti Toxic") end)
 GravityBtn.MouseButton1Click:Connect(function() toggle(GravityBtn, "gravity", "Anti Gravity") end)
 FlingBtn.MouseButton1Click:Connect(function() toggle(FlingBtn, "fling", "Anti Fling") end)
 SpeedBtn.MouseButton1Click:Connect(function() toggle(SpeedBtn, "speed", "Anti Speed") end)
