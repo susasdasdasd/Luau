@@ -1,1 +1,253 @@
+-- HZ RECOVERY (v25)
+-- [PERSONALIZED: FULL INTEGRITY | HEARTBEAT | PCALLS | UNDERSCORE NAMING]
 
+local _players = game:GetService('Players')
+local _LocalPlayer = _players.LocalPlayer
+local _userInput = game:GetService("UserInputService")
+local _runService = game:GetService("RunService")
+local _coreGui = game:GetService("CoreGui")
+local _starterGui = game:GetService("StarterGui")
+local _lighting = game:GetService("Lighting")
+
+-- [WHITELIST]
+local WHITELISTED_USERS = {
+    [5206038338] = true,
+    [9722416815] = true,
+    [3365293121] = true -- Added new whitelisted ID
+}
+if not WHITELISTED_USERS[_LocalPlayer.UserId] then return end
+
+-- [SYSTEM STATES]
+local _states = {
+    vampire = false, myopic = false, glitch = false, cursed = false,
+    maptide = false, freeze = false, jail = false, blind = false,
+    fling = false, speed = false, esp = false, gravity = false,
+    toxic = false
+}
+
+local _stablePos = nil
+local _lastSnapTime = 0
+local _pendingRecall = false
+local _lastFreezePos = nil
+
+-- [UI SETUP]
+local ScreenGui = Instance.new("ScreenGui", _coreGui)
+ScreenGui.Name = "HZ_Recovery"
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+MainFrame.Position = UDim2.new(0.5, -100, 0.2, 0) 
+MainFrame.Size = UDim2.new(0, 200, 0, 320)
+MainFrame.Active = true
+
+local function round(obj, r)
+    local c = Instance.new("UICorner", obj)
+    c.CornerRadius = UDim.new(0, r or 15)
+end
+round(MainFrame, 20)
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundTransparency = 1
+Title.Text = "HZ RECOVERY"
+Title.TextColor3 = Color3.fromRGB(0, 255, 255)
+Title.TextSize = 14
+Title.Font = Enum.Font.GothamBold
+
+local Scroll = Instance.new("ScrollingFrame", MainFrame)
+Scroll.Size = UDim2.new(1, 0, 1, -50)
+Scroll.Position = UDim2.new(0, 0, 0, 40)
+Scroll.BackgroundTransparency = 1
+Scroll.CanvasSize = UDim2.new(0, 0, 10, 0)
+Scroll.ScrollBarThickness = 2
+
+local function createBtn(text, color)
+    local b = Instance.new("TextButton", Scroll)
+    b.Size = UDim2.new(0.9, 0, 0, 32)
+    b.BackgroundColor3 = color
+    b.Text = text
+    b.TextColor3 = Color3.new(1, 1, 1)
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 9
+    round(b, 10)
+    return b
+end
+
+local UIList = Instance.new("UIListLayout", Scroll)
+UIList.Padding = UDim.new(0, 6); UIList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- [TELEPORT MODULE]
+local NameInput = Instance.new("TextBox", Scroll)
+NameInput.Size = UDim2.new(0.9, 0, 0, 30)
+NameInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+NameInput.PlaceholderText = "Enter Name..."
+NameInput.Text = ""
+NameInput.TextColor3 = Color3.new(1, 1, 1)
+NameInput.Font = Enum.Font.Gotham
+NameInput.TextSize = 10
+round(NameInput, 5)
+
+local TpBtn = createBtn("Teleport", Color3.fromRGB(60, 60, 60))
+
+-- [FEATURE BUTTONS]
+local SpawnBtn   = createBtn("To Spawn", Color3.fromRGB(0, 120, 215))
+local ToxicBtn   = createBtn("Anti Toxic (Off)", Color3.fromRGB(130, 0, 0))
+local GravityBtn = createBtn("Anti Gravity (Off)", Color3.fromRGB(130, 0, 0))
+local FlingBtn   = createBtn("Anti Fling (Off)", Color3.fromRGB(130, 0, 0))
+local SpeedBtn   = createBtn("Anti Speed (Off)", Color3.fromRGB(130, 0, 0))
+local ESPBtn     = createBtn("Enlightened Esp (Off)", Color3.fromRGB(130, 0, 0))
+local GlitchBtn  = createBtn("Anti Glitch (Off)", Color3.fromRGB(130, 0, 0))
+local VampBtn    = createBtn("Anti Vampire (Off)", Color3.fromRGB(130, 0, 0))
+local MyopicBtn  = createBtn("Anti Myopic (Off)", Color3.fromRGB(130, 0, 0))
+local VoidBtn    = createBtn("Anti Maptide (Off)", Color3.fromRGB(130, 0, 0))
+local RecallBtn  = createBtn("Anti Freeze (Off)", Color3.fromRGB(130, 0, 0))
+local JailBtn    = createBtn("Anti Jail (Off)", Color3.fromRGB(130, 0, 0))
+local BlindBtn   = createBtn("Anti Blind (Off)", Color3.fromRGB(130, 0, 0))
+local CursedBtn  = createBtn("Anti Cursed (Off)", Color3.fromRGB(130, 0, 0))
+
+-- [FUZZY TP LOGIC]
+local function getPlayer(str)
+    str = str:lower()
+    for _, p in pairs(_players:GetPlayers()) do
+        if p.Name:lower():sub(1, #str) == str or p.DisplayName:lower():sub(1, #str) == str then
+            return p
+        end
+    end
+    return nil
+end
+
+TpBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local target = getPlayer(NameInput.Text)
+        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+            _LocalPlayer.Character:PivotTo(target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
+        end
+    end)
+end)
+
+-- [CORE HEARTBEAT LOOP]
+_runService.Heartbeat:Connect(function()
+    pcall(function()
+        local char = _LocalPlayer.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if not root or not hum then return end
+
+        -- 1. ANTI TOXIC
+        if _states.toxic then
+            local tox = char:FindFirstChild("Toxify")
+            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then tox.Disabled = true end
+        else
+            local tox = char:FindFirstChild("Toxify")
+            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then tox.Disabled = false end
+        end
+
+        -- 2. ANTI GRAVITY
+        if _states.gravity then
+            if math.abs(workspace.Gravity - 196.2) > 0.1 then workspace.Gravity = 196.2 end
+        end
+
+        -- 3. ANTI FLING
+        if _states.fling then
+            if root.AssemblyLinearVelocity.Magnitude > 150 or root.AssemblyAngularVelocity.Magnitude > 150 then
+                root.AssemblyLinearVelocity = Vector3.zero
+                root.AssemblyAngularVelocity = Vector3.zero
+                char:PivotTo(_stablePos or root.CFrame)
+            end
+        end
+
+        -- 4. ANTI SPEED
+        if _states.speed and hum then hum.WalkSpeed = 16 end
+
+        -- 5. ENLIGHTENED ESP
+        if _states.esp then
+            for _, p in pairs(_players:GetPlayers()) do
+                if p ~= _LocalPlayer and p.Character then
+                    local arken = p.Backpack:FindFirstChild("The Arkenstone") or p.Character:FindFirstChild("The Arkenstone")
+                    local h = p.Character:FindFirstChild("HZ_ESP")
+                    if arken then
+                        if not h then
+                            h = Instance.new("Highlight", p.Character)
+                            h.Name = "HZ_ESP"; h.FillColor = Color3.fromRGB(0, 150, 255)
+                        end
+                    elseif h then h:Destroy() end
+                end
+            end
+        end
+
+        -- 6. ANTI MAPTIDE
+        if _states.maptide then
+            if root.Position.Y < -30 then 
+                root.AssemblyLinearVelocity = Vector3.zero
+                char:PivotTo(CFrame.new(root.Position.X, 200, root.Position.Z)) 
+            end
+            pcall(function() workspace.FallenPartsDestroyHeight = 0/0 end)
+        end
+
+        -- 7. STABLE POSITION (Fling Guard)
+        if tick() - _lastSnapTime > 0.5 then
+            if root.AssemblyLinearVelocity.Magnitude < 50 then _stablePos = root.CFrame end
+            _lastSnapTime = tick()
+        end
+        if _states.glitch and _stablePos then
+            if (root.Position - _stablePos.Position).Magnitude > 10000 then
+                root.AssemblyLinearVelocity = Vector3.zero
+                char:PivotTo(_stablePos)
+            end
+        end
+
+        -- 8. LEGACY TOOLS
+        if _states.vampire then workspace.CurrentCamera.CameraType = Enum.CameraType.Custom if hum then workspace.CurrentCamera.CameraSubject = hum end end
+        if _states.myopic then for _, v in pairs(_lighting:GetDescendants()) do if v:IsA("BlurEffect") then v.Enabled = false end end end
+        if _states.jail then for _, v in pairs(char:GetChildren()) do if v.Name:lower():find("jail") then v:Destroy() end end end
+        if _states.blind then 
+            local pg = _LocalPlayer:FindFirstChild("PlayerGui")
+            if pg then for _, ui in pairs(pg:GetChildren()) do if ui.Name:lower():find("blind") then ui.Enabled = false end end end
+        end
+        if _states.cursed then for _, e in pairs(_lighting:GetChildren()) do if e:IsA("ColorCorrectionEffect") then e.Enabled = false end end end
+        if _states.freeze and char:FindFirstChild("Hielo") then
+            if not _pendingRecall then _lastFreezePos = root.CFrame; _pendingRecall = true; if hum then hum.Health = 0 end end
+        end
+        if _pendingRecall and not char:FindFirstChild("Hielo") then
+            if _lastFreezePos then char:PivotTo(_lastFreezePos) end; _pendingRecall = false
+        end
+    end)
+end)
+
+-- [TOGGLE LOGIC]
+local function toggle(btn, key, name)
+    _states[key] = not _states[key]
+    btn.Text = name .. (_states[key] and " (On)" or " (Off)")
+    btn.BackgroundColor3 = _states[key] and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(130, 0, 0)
+    
+    if key == "esp" and not _states.esp then
+        for _, p in pairs(_players:GetPlayers()) do if p.Character and p.Character:FindFirstChild("HZ_ESP") then p.Character.HZ_ESP:Destroy() end end
+    end
+end
+
+-- [BUTTON CONNECTIONS]
+SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
+ToxicBtn.MouseButton1Click:Connect(function() toggle(ToxicBtn, "toxic", "Anti Toxic") end)
+GravityBtn.MouseButton1Click:Connect(function() toggle(GravityBtn, "gravity", "Anti Gravity") end)
+FlingBtn.MouseButton1Click:Connect(function() toggle(FlingBtn, "fling", "Anti Fling") end)
+SpeedBtn.MouseButton1Click:Connect(function() toggle(SpeedBtn, "speed", "Anti Speed") end)
+ESPBtn.MouseButton1Click:Connect(function() toggle(ESPBtn, "esp", "Enlightened Esp") end)
+GlitchBtn.MouseButton1Click:Connect(function() toggle(GlitchBtn, "glitch", "Anti Glitch") end)
+VampBtn.MouseButton1Click:Connect(function() toggle(VampBtn, "vampire", "Anti Vampire") end)
+MyopicBtn.MouseButton1Click:Connect(function() toggle(MyopicBtn, "myopic", "Anti Myopic") end)
+VoidBtn.MouseButton1Click:Connect(function() toggle(VoidBtn, "maptide", "Anti Maptide") end)
+RecallBtn.MouseButton1Click:Connect(function() toggle(RecallBtn, "freeze", "Anti Freeze") end)
+JailBtn.MouseButton1Click:Connect(function() toggle(JailBtn, "jail", "Anti Jail") end)
+BlindBtn.MouseButton1Click:Connect(function() toggle(BlindBtn, "blind", "Anti Blind") end)
+CursedBtn.MouseButton1Click:Connect(function() toggle(CursedBtn, "cursed", "Anti Cursed") end)
+
+-- [DRAG & TOGGLE UI]
+local drag, sPos, sInput
+MainFrame.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then drag = true sInput = input.Position sPos = MainFrame.Position end end)
+_userInput.InputChanged:Connect(function(input) if drag and input.UserInputType == Enum.UserInputType.MouseMovement then local delta = input.Position - sInput MainFrame.Position = UDim2.new(sPos.X.Scale, sPos.X.Offset + delta.X, sPos.Y.Scale, sPos.Y.Offset + delta.Y) end end)
+_userInput.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end end)
+
+_userInput.InputBegan:Connect(function(i, p) 
+    if not p and i.KeyCode == Enum.KeyCode.L then MainFrame.Visible = not MainFrame.Visible end
+end)
