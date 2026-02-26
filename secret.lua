@@ -1,4 +1,4 @@
--- HZ RECOVERY (v25)
+-- HZ RECOVERY (v26)
 -- [PERSONALIZED: FULL INTEGRITY | HEARTBEAT | PCALLS | UNDERSCORE NAMING]
 
 local _players = game:GetService('Players')
@@ -13,7 +13,7 @@ local _lighting = game:GetService("Lighting")
 local WHITELISTED_USERS = {
     [5206038338] = true,
     [9722416815] = true,
-    [3365293121] = true -- Added new whitelisted ID
+    [3365293121] = true
 }
 if not WHITELISTED_USERS[_LocalPlayer.UserId] then return end
 
@@ -58,7 +58,7 @@ local Scroll = Instance.new("ScrollingFrame", MainFrame)
 Scroll.Size = UDim2.new(1, 0, 1, -50)
 Scroll.Position = UDim2.new(0, 0, 0, 40)
 Scroll.BackgroundTransparency = 1
-Scroll.CanvasSize = UDim2.new(0, 0, 10, 0)
+Scroll.CanvasSize = UDim2.new(0, 0, 11, 0)
 Scroll.ScrollBarThickness = 2
 
 local function createBtn(text, color)
@@ -91,6 +91,7 @@ local TpBtn = createBtn("Teleport", Color3.fromRGB(60, 60, 60))
 
 -- [FEATURE BUTTONS]
 local SpawnBtn   = createBtn("To Spawn", Color3.fromRGB(0, 120, 215))
+local UnflyBtn   = createBtn("Unfly Player", Color3.fromRGB(255, 165, 0))
 local ToxicBtn   = createBtn("Anti Toxic (Off)", Color3.fromRGB(130, 0, 0))
 local GravityBtn = createBtn("Anti Gravity (Off)", Color3.fromRGB(130, 0, 0))
 local FlingBtn   = createBtn("Anti Fling (Off)", Color3.fromRGB(130, 0, 0))
@@ -104,6 +105,34 @@ local RecallBtn  = createBtn("Anti Freeze (Off)", Color3.fromRGB(130, 0, 0))
 local JailBtn    = createBtn("Anti Jail (Off)", Color3.fromRGB(130, 0, 0))
 local BlindBtn   = createBtn("Anti Blind (Off)", Color3.fromRGB(130, 0, 0))
 local CursedBtn  = createBtn("Anti Cursed (Off)", Color3.fromRGB(130, 0, 0))
+
+-- [UNFLY LOGIC]
+local function _unfly()
+    pcall(function()
+        local _char = _LocalPlayer.Character
+        local _hum = _char:FindFirstChildOfClass("Humanoid")
+        
+        -- Search for common fly scripts and disable them
+        for _, _v in pairs(_char:GetDescendants()) do
+            if _v:IsA("BaseScript") and (_v.Name:lower():find("fly") or _v.Name:lower():find("flying")) then
+                _v.Disabled = true
+            end
+        end
+        for _, _v in pairs(_LocalPlayer:GetDescendants()) do
+            if _v:IsA("BaseScript") and (_v.Name:lower():find("fly") or _v.Name:lower():find("flying")) then
+                _v.Disabled = true
+            end
+        end
+
+        -- Clean up physics remnants
+        if _hum then _hum.PlatformStand = false end
+        for _, _v in pairs(_char:GetDescendants()) do
+            if _v:IsA("BodyVelocity") or _v:IsA("BodyGyro") or _v:IsA("RocketPropulsion") then
+                _v:Destroy()
+            end
+        end
+    end)
+end
 
 -- [FUZZY TP LOGIC]
 local function getPlayer(str)
@@ -228,6 +257,7 @@ end
 
 -- [BUTTON CONNECTIONS]
 SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
+UnflyBtn.MouseButton1Click:Connect(_unfly)
 ToxicBtn.MouseButton1Click:Connect(function() toggle(ToxicBtn, "toxic", "Anti Toxic") end)
 GravityBtn.MouseButton1Click:Connect(function() toggle(GravityBtn, "gravity", "Anti Gravity") end)
 FlingBtn.MouseButton1Click:Connect(function() toggle(FlingBtn, "fling", "Anti Fling") end)
