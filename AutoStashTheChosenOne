@@ -1,4 +1,4 @@
--- HZ RECOVERY (v18)
+-- HZ RECOVERY (v24)
 -- [PERSONALIZED: FULL INTEGRITY | HEARTBEAT | PCALLS | UNDERSCORE NAMING]
 
 local _players = game:GetService('Players')
@@ -57,7 +57,7 @@ local Scroll = Instance.new("ScrollingFrame", MainFrame)
 Scroll.Size = UDim2.new(1, 0, 1, -50)
 Scroll.Position = UDim2.new(0, 0, 0, 40)
 Scroll.BackgroundTransparency = 1
-Scroll.CanvasSize = UDim2.new(0, 0, 9.5, 0)
+Scroll.CanvasSize = UDim2.new(0, 0, 10, 0)
 Scroll.ScrollBarThickness = 2
 
 local function createBtn(text, color)
@@ -131,26 +131,20 @@ _runService.Heartbeat:Connect(function()
         if not char then return end
         local root = char:FindFirstChild("HumanoidRootPart")
         local hum = char:FindFirstChildOfClass("Humanoid")
-        if not root then return end
+        if not root or not hum then return end
 
-        -- 1. ANTI TOXIC (Improved Animation Safety)
+        -- 1. ANTI TOXIC
         if _states.toxic then
             local tox = char:FindFirstChild("Toxify")
-            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then
-                tox.Disabled = true
-            end
+            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then tox.Disabled = true end
         else
             local tox = char:FindFirstChild("Toxify")
-            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then
-                tox.Disabled = false
-            end
+            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then tox.Disabled = false end
         end
 
         -- 2. ANTI GRAVITY
         if _states.gravity then
-            if math.abs(workspace.Gravity - 196.2) > 0.1 then
-                workspace.Gravity = 196.2
-            end
+            if math.abs(workspace.Gravity - 196.2) > 0.1 then workspace.Gravity = 196.2 end
         end
 
         -- 3. ANTI FLING
@@ -190,7 +184,7 @@ _runService.Heartbeat:Connect(function()
             pcall(function() workspace.FallenPartsDestroyHeight = 0/0 end)
         end
 
-        -- 7. STABLE POS & ANTI GLITCH
+        -- 7. STABLE POSITION (Fling Guard)
         if tick() - _lastSnapTime > 0.5 then
             if root.AssemblyLinearVelocity.Magnitude < 50 then _stablePos = root.CFrame end
             _lastSnapTime = tick()
@@ -202,24 +196,15 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- 8. LEGACY HZ TOOLS
-        if _states.vampire then 
-            workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-            if hum then workspace.CurrentCamera.CameraSubject = hum end
-        end
-        if _states.myopic then 
-            for _, v in pairs(_lighting:GetDescendants()) do if v:IsA("BlurEffect") then v.Enabled = false end end
-        end
-        if _states.jail then 
-            for _, v in pairs(char:GetChildren()) do if v.Name:lower():find("jail") then v:Destroy() end end 
-        end
+        -- 8. LEGACY TOOLS
+        if _states.vampire then workspace.CurrentCamera.CameraType = Enum.CameraType.Custom if hum then workspace.CurrentCamera.CameraSubject = hum end end
+        if _states.myopic then for _, v in pairs(_lighting:GetDescendants()) do if v:IsA("BlurEffect") then v.Enabled = false end end end
+        if _states.jail then for _, v in pairs(char:GetChildren()) do if v.Name:lower():find("jail") then v:Destroy() end end end
         if _states.blind then 
             local pg = _LocalPlayer:FindFirstChild("PlayerGui")
             if pg then for _, ui in pairs(pg:GetChildren()) do if ui.Name:lower():find("blind") then ui.Enabled = false end end end
         end
-        if _states.cursed then 
-            for _, e in pairs(_lighting:GetChildren()) do if e:IsA("ColorCorrectionEffect") then e.Enabled = false end end 
-        end
+        if _states.cursed then for _, e in pairs(_lighting:GetChildren()) do if e:IsA("ColorCorrectionEffect") then e.Enabled = false end end end
         if _states.freeze and char:FindFirstChild("Hielo") then
             if not _pendingRecall then _lastFreezePos = root.CFrame; _pendingRecall = true; if hum then hum.Health = 0 end end
         end
@@ -229,16 +214,18 @@ _runService.Heartbeat:Connect(function()
     end)
 end)
 
--- [TOGGLE CONTROLS]
+-- [TOGGLE LOGIC]
 local function toggle(btn, key, name)
     _states[key] = not _states[key]
     btn.Text = name .. (_states[key] and " (On)" or " (Off)")
     btn.BackgroundColor3 = _states[key] and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(130, 0, 0)
+    
     if key == "esp" and not _states.esp then
         for _, p in pairs(_players:GetPlayers()) do if p.Character and p.Character:FindFirstChild("HZ_ESP") then p.Character.HZ_ESP:Destroy() end end
     end
 end
 
+-- [BUTTON CONNECTIONS]
 SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
 ToxicBtn.MouseButton1Click:Connect(function() toggle(ToxicBtn, "toxic", "Anti Toxic") end)
 GravityBtn.MouseButton1Click:Connect(function() toggle(GravityBtn, "gravity", "Anti Gravity") end)
@@ -254,9 +241,12 @@ JailBtn.MouseButton1Click:Connect(function() toggle(JailBtn, "jail", "Anti Jail"
 BlindBtn.MouseButton1Click:Connect(function() toggle(BlindBtn, "blind", "Anti Blind") end)
 CursedBtn.MouseButton1Click:Connect(function() toggle(CursedBtn, "cursed", "Anti Cursed") end)
 
--- [DRAG & TOGGLE 'L']
+-- [DRAG & TOGGLE UI]
 local drag, sPos, sInput
 MainFrame.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then drag = true sInput = input.Position sPos = MainFrame.Position end end)
 _userInput.InputChanged:Connect(function(input) if drag and input.UserInputType == Enum.UserInputType.MouseMovement then local delta = input.Position - sInput MainFrame.Position = UDim2.new(sPos.X.Scale, sPos.X.Offset + delta.X, sPos.Y.Scale, sPos.Y.Offset + delta.Y) end end)
 _userInput.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end end)
-_userInput.InputBegan:Connect(function(i, p) if not p and i.KeyCode == Enum.KeyCode.L then MainFrame.Visible = not MainFrame.Visible end end)
+
+_userInput.InputBegan:Connect(function(i, p) 
+    if not p and i.KeyCode == Enum.KeyCode.L then MainFrame.Visible = not MainFrame.Visible end
+end)
