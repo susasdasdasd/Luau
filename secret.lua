@@ -1,4 +1,4 @@
--- HZ RECOVERY (v31)
+-- HZ RECOVERY
 -- [PERSONALIZED: FULL INTEGRITY | HEARTBEAT | PCALLS | UNDERSCORE NAMING]
 
 local _players = game:GetService('Players')
@@ -49,7 +49,7 @@ round(MainFrame, 20)
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 40)
 Title.BackgroundTransparency = 1
-Title.Text = "HZ RECOVERY v31"
+Title.Text = "HZ RECOVERY"
 Title.TextColor3 = Color3.fromRGB(0, 255, 255)
 Title.TextSize = 14
 Title.Font = Enum.Font.GothamBold
@@ -90,6 +90,7 @@ round(NameInput, 5)
 local TpBtn = createBtn("Teleport", Color3.fromRGB(60, 60, 60))
 
 -- [FEATURE BUTTONS]
+local RefreshBtn = createBtn("Refresh", Color3.fromRGB(46, 204, 113))
 local SpawnBtn   = createBtn("To Spawn", Color3.fromRGB(0, 120, 215))
 local FBBtn      = createBtn("Fullbright [One-Time]", Color3.fromRGB(241, 196, 15))
 local NCBtn      = createBtn("Noclip (Off)", Color3.fromRGB(130, 0, 0))
@@ -158,10 +159,8 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- ANTI SIT (LITERAL UNSIT)
-        if _states.sit then
-            if hum.Sit then hum.Sit = false end
-        end
+        -- ANTI SIT
+        if _states.sit then if hum.Sit then hum.Sit = false end end
 
         -- ANTI TOXIC
         if _states.toxic then
@@ -184,7 +183,7 @@ _runService.Heartbeat:Connect(function()
         -- ANTI SPEED
         if _states.speed and hum then hum.WalkSpeed = 16 end
 
-        -- ANTI MAPTIDE (WITH NaN FIX)
+        -- ANTI MAPTIDE
         if _states.maptide then
             if root.Position.Y < -30 then 
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -253,6 +252,24 @@ end
 FBBtn.MouseButton1Click:Connect(_fullbright)
 UnflyBtn.MouseButton1Click:Connect(_unfly)
 SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
+
+RefreshBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local _c = _LocalPlayer.Character
+        if _c and _c:FindFirstChild("HumanoidRootPart") then
+            local _oldCF = _c.HumanoidRootPart.CFrame
+            _LocalPlayer.Character:BreakJoints()
+            local _con
+            _con = _LocalPlayer.CharacterAdded:Connect(function(_newChar)
+                local _newRoot = _newChar:WaitForChild("HumanoidRootPart", 5)
+                if _newRoot then 
+                    _newChar:PivotTo(_oldCF) 
+                end
+                _con:Disconnect()
+            end)
+        end
+    end)
+end)
 
 TpBtn.MouseButton1Click:Connect(function()
     pcall(function()
