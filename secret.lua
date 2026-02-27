@@ -23,6 +23,7 @@ local _states = {
     maptide = false, freeze = false, jail = false, blind = false,
     fling = false, speed = false, esp = false, gravity = false,
     toxic = false, collision = false, noclip = false, sit = false,
+    muteBoomboxes = false,
     activeColor = Color3.fromRGB(0, 255, 255),
     anchorTime = 0.05
 }
@@ -159,6 +160,41 @@ local JailBtn    = createBtn("Anti Jail (Off)", Color3.fromRGB(130, 0, 0))
 local BlindBtn   = createBtn("Anti Blind (Off)", Color3.fromRGB(130, 0, 0))
 local CursedBtn  = createBtn("Anti Cursed (Off)", Color3.fromRGB(130, 0, 0))
 
+-- [BOOMBOX LOGIC]
+local function _setBoomboxVolume(vol)
+    pcall(function()
+        for _, _p in pairs(_players:GetPlayers()) do
+            local _containers = {_p.Backpack, _p.Character}
+            for _, _folder in pairs(_containers) do
+                if _folder then
+                    local _box = _folder:FindFirstChild("SuperFlyGoldBoombox")
+                    if _box then
+                        local _handle = _box:FindFirstChild("Handle")
+                        if _handle then
+                            local _sound = _handle:FindFirstChild("Sound")
+                            if _sound and _sound:IsA("Sound") then
+                                _sound.Volume = vol
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+
+_LocalPlayer.Chatted:Connect(function(_msg)
+    local _cmd = _msg:lower()
+    if _cmd == "!muteboomboxes" then
+        _states.muteBoomboxes = true
+        _starterGui:SetCore("SendNotification", {Title = "HZ RECOVERY", Text = "Boomboxes Muted"})
+    elseif _cmd == "!unmuteboomboxes" then
+        _states.muteBoomboxes = false
+        _setBoomboxVolume(1)
+        _starterGui:SetCore("SendNotification", {Title = "HZ RECOVERY", Text = "Boomboxes Unmuted"})
+    end
+end)
+
 -- [PICKER & SLIDER LOGIC]
 local _h, _s, _v = 0, 1, 1
 local function updatePickerColor()
@@ -194,7 +230,7 @@ end)
 
 ClosePicker.MouseButton1Click:Connect(function() PickerFrame.Visible = false end)
 
--- [COLOR ALL LOGIC - DEEP SEARCH]
+-- [COLOR ALL LOGIC]
 local function _performColorAll()
     pcall(function()
         local _char = _LocalPlayer.Character
@@ -215,7 +251,6 @@ local function _performColorAll()
         local _bricksFolder = workspace:FindFirstChild("Bricks")
         if not _bricksFolder then return end
 
-        -- Use GetDescendants to find ALL bricks, even nested ones
         for _, _v in pairs(_bricksFolder:GetDescendants()) do
             if _v.Name == "Brick" and _v:IsA("BasePart") then
                 _char:PivotTo(_v.CFrame * CFrame.new(0, 2, 0))
@@ -268,6 +303,8 @@ _runService.Heartbeat:Connect(function()
         local hum = char:FindFirstChildOfClass("Humanoid")
         if not root or not hum then return end
 
+        if _states.muteBoomboxes then _setBoomboxVolume(0) end
+
         if _activeHeadsit and _activeHeadsit.Character and _activeHeadsit.Character:FindFirstChild("Head") then
             if hum.Jump then _activeHeadsit = nil else
                 hum.Sit = true
@@ -315,19 +352,33 @@ _runService.Heartbeat:Connect(function()
             if _lastFreezePos then char:PivotTo(_lastFreezePos) end
             _pendingRecall = false
         end
+
         if _states.esp then
             for _, p in pairs(_players:GetPlayers()) do
                 if p ~= _LocalPlayer and p.Character then
-                    local arken = p.Backpack:FindFirstChild("The Arkenstone") or p.Character:FindFirstChild("The Arkenstone")
-                    if arken and not p.Character:FindFirstChild("HZ_ESP") then
-                        local h = Instance.new("Highlight", p.Character)
-                        h.Name = "HZ_ESP"; h.FillColor = Color3.fromRGB(0, 150, 255)
-                    elseif not arken and p.Character:FindFirstChild("HZ_ESP") then
-                        p.Character.HZ_ESP:Destroy()
+                    local _hasArken = p.Backpack:FindFirstChild("The Arkenstone") or p.Character:FindFirstChild("The Arkenstone")
+                    local _espObj = p.Character:FindFirstChild("HZ_ESP")
+                    if _hasArken then
+                        if not _espObj then
+                            local h = Instance.new("Highlight")
+                            h.Name = "HZ_ESP"
+                            h.FillColor = Color3.fromRGB(0, 150, 255)
+                            h.OutlineColor = Color3.new(1, 1, 1)
+                            h.FillTransparency = 0.5
+                            h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                            h.Parent = p.Character
+                        end
+                    else
+                        if _espObj then _espObj:Destroy() end
                     end
                 end
             end
+        else
+            for _, p in pairs(_players:GetPlayers()) do
+                if p.Character and p.Character:FindFirstChild("HZ_ESP") then p.Character.HZ_ESP:Destroy() end
+            end
         end
+
         if _states.vampire then 
             workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
             _starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
