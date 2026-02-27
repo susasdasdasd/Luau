@@ -22,7 +22,9 @@ local _states = {
     vampire = false, myopic = false, glitch = false, cursed = false,
     maptide = false, freeze = false, jail = false, blind = false,
     fling = false, speed = false, esp = false, gravity = false,
-    toxic = false, collision = false, noclip = false, sit = false
+    toxic = false, collision = false, noclip = false, sit = false,
+    prefix = "!",
+    tpMode = "loop" -- Options: loop, ring, hl, vl
 }
 
 local _stablePos = nil
@@ -136,6 +138,74 @@ local function _unfly()
     end)
 end
 
+local function _bringUA(targetChar)
+    pcall(function()
+        if not targetChar then return end
+        local _root = targetChar:FindFirstChild("HumanoidRootPart")
+        if not _root then return end
+        
+        local _parts = {}
+        for _, _part in pairs(workspace:GetDescendants()) do
+            if _part:IsA("BasePart") and not _part.Anchored and not _part:IsDescendantOf(targetChar) then
+                table.insert(_parts, _part)
+            end
+        end
+
+        local _mode = _states.tpMode
+        for _i, _v in pairs(_parts) do
+            if _mode == "loop" then
+                _v.CFrame = _root.CFrame
+            elseif _mode == "ring" then
+                local _angle = (_i / #_parts) * math.pi * 2
+                _v.CFrame = _root.CFrame * CFrame.new(math.cos(_angle) * 10, 0, math.sin(_angle) * 10)
+            elseif _mode == "hl" then
+                local _spacing = 4
+                _v.CFrame = _root.CFrame * CFrame.new((_i - (#_parts/2)) * _spacing, 0, 0)
+            elseif _mode == "vl" then
+                local _spacing = 4
+                _v.CFrame = _root.CFrame * CFrame.new(0, (_i - (#_parts/2)) * _spacing, 0)
+            end
+        end
+    end)
+end
+
+-- [CHAT COMMANDS]
+_LocalPlayer.Chatted:Connect(function(_msg)
+    pcall(function()
+        local _args = _msg:lower():split(" ")
+        local _pref = _states.prefix
+
+        if _args[1]:sub(1, #_pref) == _pref then
+            local _cmd = _args[1]:sub(#_pref + 1)
+
+            if _cmd == "setprefix" and _args[2] then
+                _states.prefix = _args[2]
+            end
+
+            if _cmd == "setmode" and _args[2] then
+                local _m = _args[2]
+                if _m == "ring" or _m == "hl" or _m == "vl" or _m == "loop" then
+                    _states.tpMode = _m
+                end
+            end
+
+            if _cmd == "tpua" then
+                local _name = _args[2]
+                if _name == "me" then
+                    _bringUA(_LocalPlayer.Character)
+                elseif _name then
+                    for _, _p in pairs(_players:GetPlayers()) do
+                        if _p.Name:lower():sub(1, #_name) == _name or _p.DisplayName:lower():sub(1, #_name) == _name then
+                            _bringUA(_p.Character)
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end)
+
 -- [CORE HEARTBEAT LOOP]
 _runService.Heartbeat:Connect(function()
     pcall(function()
@@ -145,12 +215,10 @@ _runService.Heartbeat:Connect(function()
         local hum = char:FindFirstChildOfClass("Humanoid")
         if not root or not hum then return end
 
-        -- NOCLIP
         if _states.noclip then
             for _, v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
         end
 
-        -- ANTI COLLISION
         if _states.collision then
             for _, p in pairs(_players:GetPlayers()) do
                 if p ~= _LocalPlayer and p.Character then
@@ -159,19 +227,15 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- ANTI SIT
         if _states.sit then if hum.Sit then hum.Sit = false end end
 
-        -- ANTI TOXIC
         if _states.toxic then
             local tox = char:FindFirstChild("Toxify")
             if tox then tox.Disabled = true end
         end
 
-        -- ANTI GRAVITY
         if _states.gravity then if math.abs(workspace.Gravity - 196.2) > 0.1 then workspace.Gravity = 196.2 end end
 
-        -- ANTI FLING
         if _states.fling then
             if root.AssemblyLinearVelocity.Magnitude > 150 or root.AssemblyAngularVelocity.Magnitude > 150 then
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -180,10 +244,8 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- ANTI SPEED
         if _states.speed and hum then hum.WalkSpeed = 16 end
 
-        -- ANTI MAPTIDE
         if _states.maptide then
             if root.Position.Y < -30 then 
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -192,7 +254,6 @@ _runService.Heartbeat:Connect(function()
             pcall(function() workspace.FallenPartsDestroyHeight = 0/0 end) 
         end
 
-        -- ANTI FREEZE (RECALL)
         if _states.freeze and char:FindFirstChild("Hielo") then
             if not _pendingRecall then 
                 _lastFreezePos = root.CFrame
@@ -205,7 +266,6 @@ _runService.Heartbeat:Connect(function()
             _pendingRecall = false
         end
 
-        -- ENLIGHTENED ESP
         if _states.esp then
             for _, p in pairs(_players:GetPlayers()) do
                 if p ~= _LocalPlayer and p.Character then
@@ -220,8 +280,23 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- LEGACY FIXES
-        if _states.vampire then workspace.CurrentCamera.CameraType = Enum.CameraType.Custom end
+        if _states.vampire then 
+            workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+            _starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+            _starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
+            local _pg = _LocalPlayer:FindFirstChild("PlayerGui")
+            if _pg then
+                for _, _gui in pairs(_pg:GetChildren()) do
+                    if _gui:IsA("ScreenGui") then
+                        local _name = _gui.Name:lower()
+                        if _name:find("inventory") or _name:find("hotbar") or _name:find("item") then
+                            _gui.Enabled = true
+                        end
+                    end
+                end
+            end
+        end
+
         if _states.myopic then for _, v in pairs(_lighting:GetChildren()) do if v:IsA("BlurEffect") then v.Enabled = false end end end
         if _states.jail then for _, v in pairs(char:GetChildren()) do if v.Name:lower():find("jail") then v:Destroy() end end end
         if _states.blind then 
@@ -230,7 +305,6 @@ _runService.Heartbeat:Connect(function()
         end
         if _states.cursed then for _, e in pairs(_lighting:GetChildren()) do if e:IsA("ColorCorrectionEffect") then e.Enabled = false end end end
 
-        -- STABLE POS
         if tick() - _lastSnapTime > 0.5 then
             if root.AssemblyLinearVelocity.Magnitude < 50 then _stablePos = root.CFrame end
             _lastSnapTime = tick()
