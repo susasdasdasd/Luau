@@ -23,14 +23,15 @@ local _states = {
     maptide = false, freeze = false, jail = false, blind = false,
     fling = false, speed = false, esp = false, gravity = false,
     toxic = false, collision = false, noclip = false, sit = false,
-    prefix = "!",
-    tpMode = "loop" -- Options: loop, ring, hl, vl
+    activeColor = Color3.fromRGB(0, 255, 255),
+    anchorTime = 0.05
 }
 
 local _stablePos = nil
 local _lastSnapTime = 0
 local _pendingRecall = false
 local _lastFreezePos = nil
+local _activeHeadsit = nil
 
 -- [UI SETUP]
 local ScreenGui = Instance.new("ScreenGui", _coreGui)
@@ -60,8 +61,11 @@ local Scroll = Instance.new("ScrollingFrame", MainFrame)
 Scroll.Size = UDim2.new(1, 0, 1, -50)
 Scroll.Position = UDim2.new(0, 0, 0, 40)
 Scroll.BackgroundTransparency = 1
-Scroll.CanvasSize = UDim2.new(0, 0, 16, 0)
+Scroll.CanvasSize = UDim2.new(0, 0, 20, 0)
 Scroll.ScrollBarThickness = 2
+
+local UIList = Instance.new("UIListLayout", Scroll)
+UIList.Padding = UDim.new(0, 6); UIList.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local function createBtn(text, color)
     local b = Instance.new("TextButton", Scroll)
@@ -75,10 +79,52 @@ local function createBtn(text, color)
     return b
 end
 
-local UIList = Instance.new("UIListLayout", Scroll)
-UIList.Padding = UDim.new(0, 6); UIList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+-- [COLOR PICKER & SPEED UI]
+local PickerFrame = Instance.new("Frame", ScreenGui)
+PickerFrame.Size = UDim2.new(0, 160, 0, 180)
+PickerFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+PickerFrame.Visible = false
+round(PickerFrame, 10)
 
--- [TELEPORT MODULE]
+local HueSlider = Instance.new("TextButton", PickerFrame)
+HueSlider.Size = UDim2.new(0.9, 0, 0, 20)
+HueSlider.Position = UDim2.new(0.05, 0, 0.05, 0)
+HueSlider.Text = "Color"
+HueSlider.TextColor3 = Color3.new(1,1,1)
+HueSlider.AutoButtonColor = false
+round(HueSlider, 5)
+
+local SatSlider = Instance.new("TextButton", PickerFrame)
+SatSlider.Size = UDim2.new(0.9, 0, 0, 20)
+SatSlider.Position = UDim2.new(0.05, 0, 0.20, 0)
+SatSlider.Text = "Saturation"
+SatSlider.TextColor3 = Color3.new(1,1,1)
+SatSlider.AutoButtonColor = false
+round(SatSlider, 5)
+
+local ValSlider = Instance.new("TextButton", PickerFrame)
+ValSlider.Size = UDim2.new(0.9, 0, 0, 20)
+ValSlider.Position = UDim2.new(0.05, 0, 0.35, 0)
+ValSlider.Text = "Brightness"
+ValSlider.TextColor3 = Color3.new(1,1,1)
+ValSlider.AutoButtonColor = false
+round(ValSlider, 5)
+
+local SpeedSlider = Instance.new("TextButton", PickerFrame)
+SpeedSlider.Size = UDim2.new(0.9, 0, 0, 20)
+SpeedSlider.Position = UDim2.new(0.05, 0, 0.55, 0)
+SpeedSlider.Text = "Speed: 0.05s"
+SpeedSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+SpeedSlider.TextColor3 = Color3.new(1,1,1)
+SpeedSlider.AutoButtonColor = false
+round(SpeedSlider, 5)
+
+local ClosePicker = createBtn("Apply Settings", Color3.fromRGB(0, 255, 255))
+ClosePicker.Parent = PickerFrame
+ClosePicker.Position = UDim2.new(0.05, 0, 0.78, 0)
+ClosePicker.Size = UDim2.new(0.9, 0, 0, 25)
+
+-- [INPUTS & BUTTONS]
 local NameInput = Instance.new("TextBox", Scroll)
 NameInput.Size = UDim2.new(0.9, 0, 0, 30)
 NameInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -90,8 +136,8 @@ NameInput.TextSize = 10
 round(NameInput, 5)
 
 local TpBtn = createBtn("Teleport", Color3.fromRGB(60, 60, 60))
-
--- [FEATURE BUTTONS]
+local HeadsitBtn = createBtn("Headsit", Color3.fromRGB(100, 40, 150))
+local ColorBtn = createBtn("Color All", _states.activeColor)
 local RefreshBtn = createBtn("Refresh", Color3.fromRGB(46, 204, 113))
 local SpawnBtn   = createBtn("To Spawn", Color3.fromRGB(0, 120, 215))
 local FBBtn      = createBtn("Fullbright [One-Time]", Color3.fromRGB(241, 196, 15))
@@ -112,6 +158,81 @@ local RecallBtn  = createBtn("Anti Freeze (Off)", Color3.fromRGB(130, 0, 0))
 local JailBtn    = createBtn("Anti Jail (Off)", Color3.fromRGB(130, 0, 0))
 local BlindBtn   = createBtn("Anti Blind (Off)", Color3.fromRGB(130, 0, 0))
 local CursedBtn  = createBtn("Anti Cursed (Off)", Color3.fromRGB(130, 0, 0))
+
+-- [PICKER & SLIDER LOGIC]
+local _h, _s, _v = 0, 1, 1
+local function updatePickerColor()
+    _states.activeColor = Color3.fromHSV(_h, _s, _v)
+    ColorBtn.BackgroundColor3 = _states.activeColor
+    HueSlider.BackgroundColor3 = Color3.fromHSV(_h, 1, 1)
+end
+
+local function handleSlider(slider, callback)
+    slider.MouseButton1Down:Connect(function()
+        local con
+        con = _runService.RenderStepped:Connect(function()
+            if not _userInput:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then con:Disconnect() return end
+            local mousePos = _userInput:GetMouseLocation().X
+            local relativePos = math.clamp((mousePos - slider.AbsolutePosition.X) / slider.AbsoluteSize.X, 0, 1)
+            callback(relativePos)
+        end)
+    end)
+end
+
+handleSlider(HueSlider, function(p) _h = p updatePickerColor() end)
+handleSlider(SatSlider, function(p) _s = p updatePickerColor() end)
+handleSlider(ValSlider, function(p) _v = p updatePickerColor() end)
+handleSlider(SpeedSlider, function(p) 
+    _states.anchorTime = math.clamp(p * 0.5, 0.001, 0.5) 
+    SpeedSlider.Text = string.format("Speed: %.3fs", _states.anchorTime)
+end)
+
+ColorBtn.MouseButton2Click:Connect(function()
+    PickerFrame.Position = UDim2.new(0, ColorBtn.AbsolutePosition.X + 210, 0, ColorBtn.AbsolutePosition.Y)
+    PickerFrame.Visible = not PickerFrame.Visible
+end)
+
+ClosePicker.MouseButton1Click:Connect(function() PickerFrame.Visible = false end)
+
+-- [COLOR ALL LOGIC - DEEP SEARCH]
+local function _performColorAll()
+    pcall(function()
+        local _char = _LocalPlayer.Character
+        local _hum = _char:FindFirstChildOfClass("Humanoid")
+        local _paint = _LocalPlayer.Backpack:FindFirstChild("Paint") or _char:FindFirstChild("Paint")
+        
+        if not _paint then
+            _starterGui:SetCore("SendNotification", {Title = "HZ RECOVERY", Text = "Equip Paint first!"})
+            return
+        end
+
+        _paint.Parent = _char
+        _hum:EquipTool(_paint)
+        
+        local _event = _paint:FindFirstChild("Script"):FindFirstChild("Event")
+        if not _event then return end
+
+        local _bricksFolder = workspace:FindFirstChild("Bricks")
+        if not _bricksFolder then return end
+
+        -- Use GetDescendants to find ALL bricks, even nested ones
+        for _, _v in pairs(_bricksFolder:GetDescendants()) do
+            if _v.Name == "Brick" and _v:IsA("BasePart") then
+                _char:PivotTo(_v.CFrame * CFrame.new(0, 2, 0))
+                
+                _event:FireServer(
+                    _v, 
+                    "Top", 
+                    _v.Position, 
+                    'both \u{1f91d}', 
+                    _states.activeColor,
+                    'Anchor'
+                )
+                task.wait(_states.anchorTime)
+            end
+        end
+    end)
+end
 
 -- [UTILITY LOGIC]
 local function _fullbright()
@@ -138,75 +259,7 @@ local function _unfly()
     end)
 end
 
-local function _bringUA(targetChar)
-    pcall(function()
-        if not targetChar then return end
-        local _root = targetChar:FindFirstChild("HumanoidRootPart")
-        if not _root then return end
-        
-        local _parts = {}
-        for _, _part in pairs(workspace:GetDescendants()) do
-            if _part:IsA("BasePart") and not _part.Anchored and not _part:IsDescendantOf(targetChar) then
-                table.insert(_parts, _part)
-            end
-        end
-
-        local _mode = _states.tpMode
-        for _i, _v in pairs(_parts) do
-            if _mode == "loop" then
-                _v.CFrame = _root.CFrame
-            elseif _mode == "ring" then
-                local _angle = (_i / #_parts) * math.pi * 2
-                _v.CFrame = _root.CFrame * CFrame.new(math.cos(_angle) * 10, 0, math.sin(_angle) * 10)
-            elseif _mode == "hl" then
-                local _spacing = 4
-                _v.CFrame = _root.CFrame * CFrame.new((_i - (#_parts/2)) * _spacing, 0, 0)
-            elseif _mode == "vl" then
-                local _spacing = 4
-                _v.CFrame = _root.CFrame * CFrame.new(0, (_i - (#_parts/2)) * _spacing, 0)
-            end
-        end
-    end)
-end
-
--- [CHAT COMMANDS]
-_LocalPlayer.Chatted:Connect(function(_msg)
-    pcall(function()
-        local _args = _msg:lower():split(" ")
-        local _pref = _states.prefix
-
-        if _args[1]:sub(1, #_pref) == _pref then
-            local _cmd = _args[1]:sub(#_pref + 1)
-
-            if _cmd == "setprefix" and _args[2] then
-                _states.prefix = _args[2]
-            end
-
-            if _cmd == "setmode" and _args[2] then
-                local _m = _args[2]
-                if _m == "ring" or _m == "hl" or _m == "vl" or _m == "loop" then
-                    _states.tpMode = _m
-                end
-            end
-
-            if _cmd == "tpua" then
-                local _name = _args[2]
-                if _name == "me" then
-                    _bringUA(_LocalPlayer.Character)
-                elseif _name then
-                    for _, _p in pairs(_players:GetPlayers()) do
-                        if _p.Name:lower():sub(1, #_name) == _name or _p.DisplayName:lower():sub(1, #_name) == _name then
-                            _bringUA(_p.Character)
-                            break
-                        end
-                    end
-                end
-            end
-        end
-    end)
-end)
-
--- [CORE HEARTBEAT LOOP]
+-- [HEARTBEAT LOOP]
 _runService.Heartbeat:Connect(function()
     pcall(function()
         local char = _LocalPlayer.Character
@@ -215,10 +268,14 @@ _runService.Heartbeat:Connect(function()
         local hum = char:FindFirstChildOfClass("Humanoid")
         if not root or not hum then return end
 
-        if _states.noclip then
-            for _, v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
-        end
+        if _activeHeadsit and _activeHeadsit.Character and _activeHeadsit.Character:FindFirstChild("Head") then
+            if hum.Jump then _activeHeadsit = nil else
+                hum.Sit = true
+                char:PivotTo(_activeHeadsit.Character.Head.CFrame * CFrame.new(0, 1.5, 0))
+            end
+        elseif _activeHeadsit then _activeHeadsit = nil end
 
+        if _states.noclip then for _, v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end end
         if _states.collision then
             for _, p in pairs(_players:GetPlayers()) do
                 if p ~= _LocalPlayer and p.Character then
@@ -226,16 +283,12 @@ _runService.Heartbeat:Connect(function()
                 end
             end
         end
-
-        if _states.sit then if hum.Sit then hum.Sit = false end end
-
+        if _states.sit and not _activeHeadsit then if hum.Sit then hum.Sit = false end end
         if _states.toxic then
             local tox = char:FindFirstChild("Toxify")
             if tox then tox.Disabled = true end
         end
-
         if _states.gravity then if math.abs(workspace.Gravity - 196.2) > 0.1 then workspace.Gravity = 196.2 end end
-
         if _states.fling then
             if root.AssemblyLinearVelocity.Magnitude > 150 or root.AssemblyAngularVelocity.Magnitude > 150 then
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -243,9 +296,7 @@ _runService.Heartbeat:Connect(function()
                 char:PivotTo(_stablePos or root.CFrame)
             end
         end
-
         if _states.speed and hum then hum.WalkSpeed = 16 end
-
         if _states.maptide then
             if root.Position.Y < -30 then 
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -253,7 +304,6 @@ _runService.Heartbeat:Connect(function()
             end
             pcall(function() workspace.FallenPartsDestroyHeight = 0/0 end) 
         end
-
         if _states.freeze and char:FindFirstChild("Hielo") then
             if not _pendingRecall then 
                 _lastFreezePos = root.CFrame
@@ -265,7 +315,6 @@ _runService.Heartbeat:Connect(function()
             if _lastFreezePos then char:PivotTo(_lastFreezePos) end
             _pendingRecall = false
         end
-
         if _states.esp then
             for _, p in pairs(_players:GetPlayers()) do
                 if p ~= _LocalPlayer and p.Character then
@@ -279,7 +328,6 @@ _runService.Heartbeat:Connect(function()
                 end
             end
         end
-
         if _states.vampire then 
             workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
             _starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
@@ -296,7 +344,6 @@ _runService.Heartbeat:Connect(function()
                 end
             end
         end
-
         if _states.myopic then for _, v in pairs(_lighting:GetChildren()) do if v:IsA("BlurEffect") then v.Enabled = false end end end
         if _states.jail then for _, v in pairs(char:GetChildren()) do if v.Name:lower():find("jail") then v:Destroy() end end end
         if _states.blind then 
@@ -304,7 +351,6 @@ _runService.Heartbeat:Connect(function()
             if pg then for _, ui in pairs(pg:GetChildren()) do if ui.Name:lower():find("blind") then ui.Enabled = false end end end
         end
         if _states.cursed then for _, e in pairs(_lighting:GetChildren()) do if e:IsA("ColorCorrectionEffect") then e.Enabled = false end end end
-
         if tick() - _lastSnapTime > 0.5 then
             if root.AssemblyLinearVelocity.Magnitude < 50 then _stablePos = root.CFrame end
             _lastSnapTime = tick()
@@ -323,9 +369,23 @@ local function toggle(btn, key, name)
 end
 
 -- [CONNECTIONS]
+ColorBtn.MouseButton1Click:Connect(_performColorAll)
 FBBtn.MouseButton1Click:Connect(_fullbright)
 UnflyBtn.MouseButton1Click:Connect(_unfly)
 SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
+
+HeadsitBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local tName = NameInput.Text:lower()
+        if tName == "" or tName == " " then _activeHeadsit = nil return end
+        for _, p in pairs(_players:GetPlayers()) do
+            if p.Name:lower():sub(1, #tName) == tName or p.DisplayName:lower():sub(1, #tName) == tName then
+                _activeHeadsit = p
+                break
+            end
+        end
+    end)
+end)
 
 RefreshBtn.MouseButton1Click:Connect(function()
     pcall(function()
@@ -336,9 +396,7 @@ RefreshBtn.MouseButton1Click:Connect(function()
             local _con
             _con = _LocalPlayer.CharacterAdded:Connect(function(_newChar)
                 local _newRoot = _newChar:WaitForChild("HumanoidRootPart", 5)
-                if _newRoot then 
-                    _newChar:PivotTo(_oldCF) 
-                end
+                if _newRoot then _newChar:PivotTo(_oldCF) end
                 _con:Disconnect()
             end)
         end
@@ -374,12 +432,8 @@ JailBtn.MouseButton1Click:Connect(function() toggle(JailBtn, "jail", "Anti Jail"
 BlindBtn.MouseButton1Click:Connect(function() toggle(BlindBtn, "blind", "Anti Blind") end)
 CursedBtn.MouseButton1Click:Connect(function() toggle(CursedBtn, "cursed", "Anti Cursed") end)
 
--- [DRAG & TOGGLE UI]
 local drag, sPos, sInput
 MainFrame.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then drag = true sInput = input.Position sPos = MainFrame.Position end end)
 _userInput.InputChanged:Connect(function(input) if drag and input.UserInputType == Enum.UserInputType.MouseMovement then local delta = input.Position - sInput MainFrame.Position = UDim2.new(sPos.X.Scale, sPos.X.Offset + delta.X, sPos.Y.Scale, sPos.Y.Offset + delta.Y) end end)
 _userInput.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end end)
-
-_userInput.InputBegan:Connect(function(i, p) 
-    if not p and i.KeyCode == Enum.KeyCode.L then MainFrame.Visible = not MainFrame.Visible end
-end)
+_userInput.InputBegan:Connect(function(i, p) if not p and i.KeyCode == Enum.KeyCode.L then MainFrame.Visible = not MainFrame.Visible end end)
