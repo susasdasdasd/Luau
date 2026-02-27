@@ -1,4 +1,4 @@
--- HZ RECOVERY (v26)
+-- HZ RECOVERY (v31)
 -- [PERSONALIZED: FULL INTEGRITY | HEARTBEAT | PCALLS | UNDERSCORE NAMING]
 
 local _players = game:GetService('Players')
@@ -22,7 +22,7 @@ local _states = {
     vampire = false, myopic = false, glitch = false, cursed = false,
     maptide = false, freeze = false, jail = false, blind = false,
     fling = false, speed = false, esp = false, gravity = false,
-    toxic = false
+    toxic = false, collision = false, noclip = false, sit = false
 }
 
 local _stablePos = nil
@@ -37,7 +37,7 @@ ScreenGui.Name = "HZ_Recovery"
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 MainFrame.Position = UDim2.new(0.5, -100, 0.2, 0) 
-MainFrame.Size = UDim2.new(0, 200, 0, 320)
+MainFrame.Size = UDim2.new(0, 200, 0, 350)
 MainFrame.Active = true
 
 local function round(obj, r)
@@ -49,7 +49,7 @@ round(MainFrame, 20)
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 40)
 Title.BackgroundTransparency = 1
-Title.Text = "HZ RECOVERY"
+Title.Text = "HZ RECOVERY v31"
 Title.TextColor3 = Color3.fromRGB(0, 255, 255)
 Title.TextSize = 14
 Title.Font = Enum.Font.GothamBold
@@ -58,12 +58,12 @@ local Scroll = Instance.new("ScrollingFrame", MainFrame)
 Scroll.Size = UDim2.new(1, 0, 1, -50)
 Scroll.Position = UDim2.new(0, 0, 0, 40)
 Scroll.BackgroundTransparency = 1
-Scroll.CanvasSize = UDim2.new(0, 0, 11, 0)
+Scroll.CanvasSize = UDim2.new(0, 0, 16, 0)
 Scroll.ScrollBarThickness = 2
 
 local function createBtn(text, color)
     local b = Instance.new("TextButton", Scroll)
-    b.Size = UDim2.new(0.9, 0, 0, 32)
+    b.Size = UDim2.new(0.9, 0, 0, 30)
     b.BackgroundColor3 = color
     b.Text = text
     b.TextColor3 = Color3.new(1, 1, 1)
@@ -91,8 +91,12 @@ local TpBtn = createBtn("Teleport", Color3.fromRGB(60, 60, 60))
 
 -- [FEATURE BUTTONS]
 local SpawnBtn   = createBtn("To Spawn", Color3.fromRGB(0, 120, 215))
+local FBBtn      = createBtn("Fullbright [One-Time]", Color3.fromRGB(241, 196, 15))
+local NCBtn      = createBtn("Noclip (Off)", Color3.fromRGB(130, 0, 0))
+local ACBtn      = createBtn("Anti Collision (Off)", Color3.fromRGB(130, 0, 0))
 local UnflyBtn   = createBtn("Unfly Player", Color3.fromRGB(255, 165, 0))
 local ToxicBtn   = createBtn("Anti Toxic (Off)", Color3.fromRGB(130, 0, 0))
+local SitBtn     = createBtn("Anti Sit (Off)", Color3.fromRGB(130, 0, 0))
 local GravityBtn = createBtn("Anti Gravity (Off)", Color3.fromRGB(130, 0, 0))
 local FlingBtn   = createBtn("Anti Fling (Off)", Color3.fromRGB(130, 0, 0))
 local SpeedBtn   = createBtn("Anti Speed (Off)", Color3.fromRGB(130, 0, 0))
@@ -106,53 +110,30 @@ local JailBtn    = createBtn("Anti Jail (Off)", Color3.fromRGB(130, 0, 0))
 local BlindBtn   = createBtn("Anti Blind (Off)", Color3.fromRGB(130, 0, 0))
 local CursedBtn  = createBtn("Anti Cursed (Off)", Color3.fromRGB(130, 0, 0))
 
--- [UNFLY LOGIC]
+-- [UTILITY LOGIC]
+local function _fullbright()
+    pcall(function()
+        _lighting.Brightness = 2
+        _lighting.ClockTime = 14
+        _lighting.FogEnd = 100000
+        _lighting.GlobalShadows = false
+        _lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+        for _, v in pairs(_lighting:GetDescendants()) do
+            if v:IsA("Atmosphere") or v:IsA("Sky") then v:Destroy() end
+        end
+    end)
+end
+
 local function _unfly()
     pcall(function()
         local _char = _LocalPlayer.Character
-        local _hum = _char:FindFirstChildOfClass("Humanoid")
-        
-        -- Search for common fly scripts and disable them
         for _, _v in pairs(_char:GetDescendants()) do
-            if _v:IsA("BaseScript") and (_v.Name:lower():find("fly") or _v.Name:lower():find("flying")) then
-                _v.Disabled = true
-            end
+            if _v:IsA("BaseScript") and (_v.Name:lower():find("fly") or _v.Name:lower():find("flying")) then _v.Disabled = true end
+            if _v:IsA("BodyVelocity") or _v:IsA("BodyGyro") or _v:IsA("RocketPropulsion") then _v:Destroy() end
         end
-        for _, _v in pairs(_LocalPlayer:GetDescendants()) do
-            if _v:IsA("BaseScript") and (_v.Name:lower():find("fly") or _v.Name:lower():find("flying")) then
-                _v.Disabled = true
-            end
-        end
-
-        -- Clean up physics remnants
-        if _hum then _hum.PlatformStand = false end
-        for _, _v in pairs(_char:GetDescendants()) do
-            if _v:IsA("BodyVelocity") or _v:IsA("BodyGyro") or _v:IsA("RocketPropulsion") then
-                _v:Destroy()
-            end
-        end
+        if _char:FindFirstChildOfClass("Humanoid") then _char:FindFirstChildOfClass("Humanoid").PlatformStand = false end
     end)
 end
-
--- [FUZZY TP LOGIC]
-local function getPlayer(str)
-    str = str:lower()
-    for _, p in pairs(_players:GetPlayers()) do
-        if p.Name:lower():sub(1, #str) == str or p.DisplayName:lower():sub(1, #str) == str then
-            return p
-        end
-    end
-    return nil
-end
-
-TpBtn.MouseButton1Click:Connect(function()
-    pcall(function()
-        local target = getPlayer(NameInput.Text)
-        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-            _LocalPlayer.Character:PivotTo(target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
-        end
-    end)
-end)
 
 -- [CORE HEARTBEAT LOOP]
 _runService.Heartbeat:Connect(function()
@@ -163,21 +144,35 @@ _runService.Heartbeat:Connect(function()
         local hum = char:FindFirstChildOfClass("Humanoid")
         if not root or not hum then return end
 
-        -- 1. ANTI TOXIC
+        -- NOCLIP
+        if _states.noclip then
+            for _, v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
+        end
+
+        -- ANTI COLLISION
+        if _states.collision then
+            for _, p in pairs(_players:GetPlayers()) do
+                if p ~= _LocalPlayer and p.Character then
+                    for _, v in pairs(p.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end
+                end
+            end
+        end
+
+        -- ANTI SIT (LITERAL UNSIT)
+        if _states.sit then
+            if hum.Sit then hum.Sit = false end
+        end
+
+        -- ANTI TOXIC
         if _states.toxic then
             local tox = char:FindFirstChild("Toxify")
-            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then tox.Disabled = true end
-        else
-            local tox = char:FindFirstChild("Toxify")
-            if tox and (tox:IsA("LocalScript") or tox:IsA("Script")) then tox.Disabled = false end
+            if tox then tox.Disabled = true end
         end
 
-        -- 2. ANTI GRAVITY
-        if _states.gravity then
-            if math.abs(workspace.Gravity - 196.2) > 0.1 then workspace.Gravity = 196.2 end
-        end
+        -- ANTI GRAVITY
+        if _states.gravity then if math.abs(workspace.Gravity - 196.2) > 0.1 then workspace.Gravity = 196.2 end end
 
-        -- 3. ANTI FLING
+        -- ANTI FLING
         if _states.fling then
             if root.AssemblyLinearVelocity.Magnitude > 150 or root.AssemblyAngularVelocity.Magnitude > 150 then
                 root.AssemblyLinearVelocity = Vector3.zero
@@ -186,60 +181,63 @@ _runService.Heartbeat:Connect(function()
             end
         end
 
-        -- 4. ANTI SPEED
+        -- ANTI SPEED
         if _states.speed and hum then hum.WalkSpeed = 16 end
 
-        -- 5. ENLIGHTENED ESP
-        if _states.esp then
-            for _, p in pairs(_players:GetPlayers()) do
-                if p ~= _LocalPlayer and p.Character then
-                    local arken = p.Backpack:FindFirstChild("The Arkenstone") or p.Character:FindFirstChild("The Arkenstone")
-                    local h = p.Character:FindFirstChild("HZ_ESP")
-                    if arken then
-                        if not h then
-                            h = Instance.new("Highlight", p.Character)
-                            h.Name = "HZ_ESP"; h.FillColor = Color3.fromRGB(0, 150, 255)
-                        end
-                    elseif h then h:Destroy() end
-                end
-            end
-        end
-
-        -- 6. ANTI MAPTIDE
+        -- ANTI MAPTIDE (WITH NaN FIX)
         if _states.maptide then
             if root.Position.Y < -30 then 
                 root.AssemblyLinearVelocity = Vector3.zero
                 char:PivotTo(CFrame.new(root.Position.X, 200, root.Position.Z)) 
             end
-            pcall(function() workspace.FallenPartsDestroyHeight = 0/0 end)
+            pcall(function() workspace.FallenPartsDestroyHeight = 0/0 end) 
         end
 
-        -- 7. STABLE POSITION (Fling Guard)
-        if tick() - _lastSnapTime > 0.5 then
-            if root.AssemblyLinearVelocity.Magnitude < 50 then _stablePos = root.CFrame end
-            _lastSnapTime = tick()
+        -- ANTI FREEZE (RECALL)
+        if _states.freeze and char:FindFirstChild("Hielo") then
+            if not _pendingRecall then 
+                _lastFreezePos = root.CFrame
+                _pendingRecall = true
+                if hum then hum.Health = 0 end 
+            end
         end
-        if _states.glitch and _stablePos then
-            if (root.Position - _stablePos.Position).Magnitude > 10000 then
-                root.AssemblyLinearVelocity = Vector3.zero
-                char:PivotTo(_stablePos)
+        if _pendingRecall and not char:FindFirstChild("Hielo") then
+            if _lastFreezePos then char:PivotTo(_lastFreezePos) end
+            _pendingRecall = false
+        end
+
+        -- ENLIGHTENED ESP
+        if _states.esp then
+            for _, p in pairs(_players:GetPlayers()) do
+                if p ~= _LocalPlayer and p.Character then
+                    local arken = p.Backpack:FindFirstChild("The Arkenstone") or p.Character:FindFirstChild("The Arkenstone")
+                    if arken and not p.Character:FindFirstChild("HZ_ESP") then
+                        local h = Instance.new("Highlight", p.Character)
+                        h.Name = "HZ_ESP"; h.FillColor = Color3.fromRGB(0, 150, 255)
+                    elseif not arken and p.Character:FindFirstChild("HZ_ESP") then
+                        p.Character.HZ_ESP:Destroy()
+                    end
+                end
             end
         end
 
-        -- 8. LEGACY TOOLS
-        if _states.vampire then workspace.CurrentCamera.CameraType = Enum.CameraType.Custom if hum then workspace.CurrentCamera.CameraSubject = hum end end
-        if _states.myopic then for _, v in pairs(_lighting:GetDescendants()) do if v:IsA("BlurEffect") then v.Enabled = false end end end
+        -- LEGACY FIXES
+        if _states.vampire then workspace.CurrentCamera.CameraType = Enum.CameraType.Custom end
+        if _states.myopic then for _, v in pairs(_lighting:GetChildren()) do if v:IsA("BlurEffect") then v.Enabled = false end end end
         if _states.jail then for _, v in pairs(char:GetChildren()) do if v.Name:lower():find("jail") then v:Destroy() end end end
         if _states.blind then 
             local pg = _LocalPlayer:FindFirstChild("PlayerGui")
             if pg then for _, ui in pairs(pg:GetChildren()) do if ui.Name:lower():find("blind") then ui.Enabled = false end end end
         end
         if _states.cursed then for _, e in pairs(_lighting:GetChildren()) do if e:IsA("ColorCorrectionEffect") then e.Enabled = false end end end
-        if _states.freeze and char:FindFirstChild("Hielo") then
-            if not _pendingRecall then _lastFreezePos = root.CFrame; _pendingRecall = true; if hum then hum.Health = 0 end end
+
+        -- STABLE POS
+        if tick() - _lastSnapTime > 0.5 then
+            if root.AssemblyLinearVelocity.Magnitude < 50 then _stablePos = root.CFrame end
+            _lastSnapTime = tick()
         end
-        if _pendingRecall and not char:FindFirstChild("Hielo") then
-            if _lastFreezePos then char:PivotTo(_lastFreezePos) end; _pendingRecall = false
+        if _states.glitch and _stablePos then
+            if (root.Position - _stablePos.Position).Magnitude > 1000 then char:PivotTo(_stablePos) end
         end
     end)
 end)
@@ -249,16 +247,29 @@ local function toggle(btn, key, name)
     _states[key] = not _states[key]
     btn.Text = name .. (_states[key] and " (On)" or " (Off)")
     btn.BackgroundColor3 = _states[key] and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(130, 0, 0)
-    
-    if key == "esp" and not _states.esp then
-        for _, p in pairs(_players:GetPlayers()) do if p.Character and p.Character:FindFirstChild("HZ_ESP") then p.Character.HZ_ESP:Destroy() end end
-    end
 end
 
--- [BUTTON CONNECTIONS]
-SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
+-- [CONNECTIONS]
+FBBtn.MouseButton1Click:Connect(_fullbright)
 UnflyBtn.MouseButton1Click:Connect(_unfly)
+SpawnBtn.MouseButton1Click:Connect(function() pcall(function() _LocalPlayer.Character:PivotTo(CFrame.new(0, 27, 0)) end) end)
+
+TpBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local tName = NameInput.Text:lower()
+        for _, p in pairs(_players:GetPlayers()) do
+            if p.Name:lower():sub(1, #tName) == tName or p.DisplayName:lower():sub(1, #tName) == tName then
+                if p.Character then _LocalPlayer.Character:PivotTo(p.Character:GetPivot()) end
+                break
+            end
+        end
+    end)
+end)
+
+NCBtn.MouseButton1Click:Connect(function() toggle(NCBtn, "noclip", "Noclip") end)
+ACBtn.MouseButton1Click:Connect(function() toggle(ACBtn, "collision", "Anti Collision") end)
 ToxicBtn.MouseButton1Click:Connect(function() toggle(ToxicBtn, "toxic", "Anti Toxic") end)
+SitBtn.MouseButton1Click:Connect(function() toggle(SitBtn, "sit", "Anti Sit") end)
 GravityBtn.MouseButton1Click:Connect(function() toggle(GravityBtn, "gravity", "Anti Gravity") end)
 FlingBtn.MouseButton1Click:Connect(function() toggle(FlingBtn, "fling", "Anti Fling") end)
 SpeedBtn.MouseButton1Click:Connect(function() toggle(SpeedBtn, "speed", "Anti Speed") end)
