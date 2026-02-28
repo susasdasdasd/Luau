@@ -380,7 +380,9 @@ _runService.Heartbeat:Connect(function()
         end
 
         if _states.vampire then 
-            workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+            local _cam = workspace.CurrentCamera
+            _cam.CameraType = Enum.CameraType.Custom
+            _cam.CameraSubject = hum
             _starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
             _starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
             local _pg = _LocalPlayer:FindFirstChild("PlayerGui")
