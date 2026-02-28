@@ -13,7 +13,8 @@ local _lighting = game:GetService("Lighting")
 local WHITELISTED_USERS = {
     [5206038338] = true,
     [9722416815] = true,
-    [3365293121] = true
+    [3365293121] = true,
+    [10530102378] = true
 }
 if not WHITELISTED_USERS[_LocalPlayer.UserId] then return end
 
