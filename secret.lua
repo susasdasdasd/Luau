@@ -80,7 +80,7 @@ local function createBtn(text, color)
     return b
 end
 
--- [COLOR PICKER & SPEED UI]
+-- [PICKER & SLIDER LOGIC]
 local PickerFrame = Instance.new("Frame", ScreenGui)
 PickerFrame.Size = UDim2.new(0, 160, 0, 180)
 PickerFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
