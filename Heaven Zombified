@@ -1,12 +1,897 @@
-local v0={[9961293911]=true,[10502961269]=true,[5206038338]=true,[9722416815 -0 ]=true,[3365294884 -(454 + 1309) ]=true};local v1=game:GetService("Players");local v2=v1.LocalPlayer;local v3=false;if v0[v2.UserId] then v3=true;end if  not v3 then local v303=0 + 0 ;local v304;while true do if ((0 -0)==v303) then v304=0 -0 ;while true do if (v304==(0 -0)) then warn("WHITELIST ERROR: ID "   .. tostring(v2.UserId)   .. " is not whitelisted." );return;end end break;end end else print("Heaven Zombified: Whitelist Accepted for "   .. v2.Name );end local v4={[11137575798 -(134 + 151) ]=true,[12943247001]=true,[12943246743 -(970 + 695) ]=true};if  not v4[game.PlaceId] then local v305=0;while true do if (v305==0) then warn("Place blocked: Not whitelisted.");return;end end end local v5=game:GetService("UserInputService");local v6=game:GetService("RunService");local v7=game:GetService("ReplicatedStorage");local v8=game:GetService("Workspace");local v9=game:GetService("GuiService");local v10=game:GetService("TextChatService");local v11=Enum.KeyCode.L;local v12=false;local v13={};local v14=false;local v15=false;local v16=false;local v17=false;local v18=false;local v19=false;local v20=false;local v21=0 -0 ;local v22=1991 -(582 + 1408) ;local v23=0.2 -0 ;local v24=125 -25 ;local v25=0 -0 ;local v26=0.1;local v27=".";local v28=false;local v29=10;local v30=1824 -(1195 + 629) ;local v31=false;local _GriefMode="G1";local _GriefSpeed=0.05;local v32=0.04 -0 ;local v33=nil;local v34=false;local v35=241 -(187 + 54) ;local v36=1;local v37=1;local v38="Block";local v39={Front=true,Back=true,Left=true,Right=true,Top=true,Bottom=true};local v40={"Front","Back","Left","Right","Top","Bottom"};local v41=Instance.new("ScreenGui");v41.Name="HeavenZombifiedPaint";v41.ResetOnSpawn=false;v41.DisplayOrder=1679 -680 ;local v45,v46=pcall(function() v41.Parent=game:GetService("CoreGui");end);if  not v45 then v41.Parent=v2:WaitForChild("PlayerGui");end local v47=Instance.new("Frame");local v48=Instance.new("TextLabel");local v49=Instance.new("ScrollingFrame");local v50=Instance.new("UIListLayout");local v51=Instance.new("Frame");local v52=Instance.new("TextBox");local v53=Instance.new("TextLabel");local v54=Instance.new("TextBox");local v55=Instance.new("TextBox");local v56=Instance.new("TextButton");local v57=Instance.new("TextButton");local v58=Instance.new("TextButton");local v59=Instance.new("TextButton");local v60=Instance.new("TextButton");local v61=Instance.new("TextButton");local v62=Instance.new("TextBox");local v63=Instance.new("TextBox");local v64=Instance.new("TextButton");local v65=Instance.new("TextButton");local v66=Instance.new("TextButton");local v67=Instance.new("TextBox");local v68=Instance.new("TextButton");local v69=Instance.new("TextButton");local v70=Instance.new("TextButton");local v71=Instance.new("TextButton");local v72=Instance.new("TextButton");local v73=Instance.new("TextButton");local v74=Instance.new("TextButton");local v75=Instance.new("TextButton");local v76=Instance.new("TextLabel");local function v77(v223,v224) local v225=Instance.new("UICorner");v225.CornerRadius=UDim.new(0 + 0 ,v224);v225.Parent=v223;end v47.Name="MainFrame";v47.BackgroundColor3=Color3.fromRGB(1648 -(1373 + 263) ,1012 -(451 + 549) ,12);v47.Position=UDim2.new(0.5 + 0 , -135,0.5 -0 , -(302 -122));v47.Size=UDim2.new(1384 -(746 + 638) ,102 + 168 ,0 -0 ,721 -(218 + 123) );v47.Active=true;v47.Parent=v41;v77(v47,1596 -(1535 + 46) );v2.Chatted:Connect(function(v228) local v229=v228:lower();local v230=v229:split(" ");if (v229==(v27   .. "unanchor all")) then local v309=v2.Backpack:FindFirstChild("Paint") or v2.Character:FindFirstChild("Paint") ;local v310=v8:FindFirstChild("Bricks");local v311=v2.Character and v2.Character:FindFirstChild("HumanoidRootPart") ;if (v309 and v310 and v311) then local v380=0 + 0 ;local v381;local v382;local v383;while true do if (v380==(1 + 1)) then for v438=1, #v383 do local v439=0;local v440;while true do if (v439==(560 -(306 + 254))) then v440=v383[v438];if (v440 and v440.Parent) then local v468=0 + 0 ;local v469;while true do if (0==v468) then v469=0;while true do if (v469==(1 -0)) then v381:FireServer(v440,"Front",v440.Position,"both \u{1f91d}",Color3.new(1468 -(899 + 568) ,1 + 0 ,1),"anchor"," ");break;end if (v469==(0 -0)) then v311.CFrame=v440.CFrame;task.wait(v32);v469=604 -(268 + 335) ;end end break;end end end break;end end end v311.CFrame=v382;break;end if (v380==(290 -(60 + 230))) then v381=v309:WaitForChild("Script"):WaitForChild("Event");v382=v311.CFrame;v380=1;end if (v380==1) then local v422=0;while true do if (v422==(573 -(426 + 146))) then v380=1 + 1 ;break;end if (v422==(1456 -(282 + 1174))) then v383={};for v462,v463 in pairs(v310:GetChildren()) do if (v463:IsA("BasePart") and (v463.Name=="Brick")) then table.insert(v383,v463);end end v422=812 -(569 + 242) ;end end end end end end if ((v230[1]==(v27   .. "setmode")) and v230[5 -3 ]) then local v312=0;local v313;while true do if (v312==0) then v313=v230[1 + 1 ]:lower();if ((v313=="g1") or (v313=="g2")) then local v423=0;while true do if (v423==(1024 -(706 + 318))) then _GriefMode=v313:upper();print("SDDV: Grief Mode switched to "   .. _GriefMode );break;end end end break;end end end if ((v230[1]==(v27   .. "setgrief")) and v230[1253 -(721 + 530) ]) then _GriefSpeed=tonumber(v230[1273 -(945 + 326) ]) or (0.05 -0) ;elseif ((v230[1 + 0 ]==(v27   .. "setanchor")) and v230[702 -(271 + 429) ]) then v32=tonumber(v230[2 + 0 ]) or 0.04 ;end if (v229:sub(1, #(v27   .. "setprefix "))==(v27   .. "setprefix ")) then local v314=1500 -(1408 + 92) ;local v315;while true do if (0==v314) then v315=v228:sub( #(v27   .. "setprefix ") + 1 );if (v315 and (v315~="")) then local v424=1086 -(461 + 625) ;local v425;while true do if (v424==(1288 -(993 + 295))) then v425=0 + 0 ;while true do if (v425==(1171 -(418 + 753))) then v27=v315;print("Prefix set to: "   .. v27 );break;end end break;end end end break;end end end if (v229:sub(1 + 0 , #(v27   .. "setpaint "))==(v27   .. "setpaint ")) then local v316=v228:sub( #(v27   .. "setpaint ") + 1 + 0 );local v317,v318,v319=v316:match("(%d+),(%d+),(%d+)");if (v317 and v318 and v319) then v54.Text=v317   .. ","   .. v318   .. ","   .. v319 ;for v390,v391 in pairs(v39) do v39[v390]=true;end print("SetPaint applied to all sides.");end end if (v229==(v27   .. "disable building")) then local v320=0 + 0 ;while true do if (v320==2) then print("Building systems disabled.");break;end if (v320==(1 + 0)) then v15=false;v12=false;v320=531 -(406 + 123) ;end if (v320==(1769 -(1749 + 20))) then v31=true;v14=false;v320=1 + 0 ;end end end if (v229:sub(1, #(v27   .. "settime "))==(v27   .. "settime ")) then local v321=0;local v322;while true do if (v321==(1322 -(1249 + 73))) then v322=tonumber(v229:sub( #(v27   .. "settime ") + 1 + 0 ));if v322 then v29=v322;end break;end end elseif (v229==(v27   .. "gr")) then local v385=0;while true do if (v385==(1145 -(466 + 679))) then v28=true;if (_GriefMode=="G1") then task.delay(v29,function() v28=false;end);end break;end end end end);local v84=Instance.new("Frame",v47);v84.Name="PickerContainer";v84.Size=UDim2.new(0.9 -0 ,0 -0 ,1900 -(106 + 1794) ,100);v84.Position=UDim2.new(0.05,0 + 0 ,0.12,0 + 0 );v84.BackgroundColor3=Color3.fromRGB(73 -48 ,67 -42 ,25);v77(v84,124 -(4 + 110) );local v89=v47.Position;local v90=false;local v91=nil;local v92=nil;v47.InputBegan:Connect(function(v231) if (v231.UserInputType==Enum.UserInputType.MouseButton1) then local v323=584 -(57 + 527) ;local v324;local v325;local v326;while true do if (v323==(1427 -(41 + 1386))) then v324=v5:GetMouseLocation() -v9:GetGuiInset() ;v325=v84.AbsolutePosition;v323=104 -(17 + 86) ;end if (v323==3) then v92=v47.Position;break;end if (v323==(2 + 0)) then v90=true;v91=v231.Position;v323=6 -3 ;end if (v323==(2 -1)) then local v396=0;while true do if (v396==(167 -(122 + 44))) then v323=2 -0 ;break;end if (v396==0) then v326=v84.AbsoluteSize;if ((v324.X>=v325.X) and (v324.X<=(v325.X + v326.X)) and (v324.Y>=v325.Y) and (v324.Y<=(v325.Y + v326.Y))) then return;end v396=3 -2 ;end end end end end end);v5.InputChanged:Connect(function(v232) if (v90 and (v232.UserInputType==Enum.UserInputType.MouseMovement)) then local v327=0 + 0 ;local v328;while true do if (v327==0) then v328=v232.Position-v91 ;v89=UDim2.new(v92.X.Scale,v92.X.Offset + v328.X ,v92.Y.Scale,v92.Y.Offset + v328.Y );break;end end end end);v5.InputEnded:Connect(function(v233) if (v233.UserInputType==Enum.UserInputType.MouseButton1) then v90=false;end end);v6.RenderStepped:Connect(function() if v47.Visible then v47.Position=v47.Position:Lerp(v89,0.15 + 0 );end end);local v93=Instance.new("Frame",v84);v93.Size=UDim2.new(1, -(20 -10),0,55);v93.Position=UDim2.new(65 -(30 + 35) ,5,0,5);v93.BackgroundColor3=Color3.new(1,1 + 0 ,1258 -(1043 + 214) );v77(v93,15 -11 );local v97=Instance.new("UIGradient",v93);v97.Color=ColorSequence.new(Color3.new(1213 -(323 + 889) ,2 -1 ,581 -(361 + 219) ),Color3.fromHSV(0,321 -(53 + 267) ,1 + 0 ));local v99=Instance.new("Frame",v84);v99.Size=UDim2.new(414 -(15 + 398) , -10,0,994 -(18 + 964) );v99.Position=UDim2.new(0 -0 ,3 + 2 ,0 + 0 ,915 -(20 + 830) );v77(v99,4 + 0 );local v102=Instance.new("UIGradient",v99);v102.Color=ColorSequence.new({ColorSequenceKeypoint.new(0 + 0 ,Color3.fromHSV(738 -(542 + 196) ,1,1)),ColorSequenceKeypoint.new(0.2,Color3.fromHSV(0.2 + 0 ,1 + 0 ,1)),ColorSequenceKeypoint.new(0.4,Color3.fromHSV(0.4 -0 ,2 -1 ,1552 -(1126 + 425) )),ColorSequenceKeypoint.new(0.6,Color3.fromHSV(0.6 -0 ,1122 -(118 + 1003) ,1)),ColorSequenceKeypoint.new(0.8 -0 ,Color3.fromHSV(377.8 -(142 + 235) ,1,1)),ColorSequenceKeypoint.new(4 -3 ,Color3.fromHSV(1,1 + 0 ,978 -(553 + 424) ))});local v104=Instance.new("TextButton",v84);v104.Size=UDim2.new(1, -10,0,18);v104.Position=UDim2.new(0,9 -4 ,0 + 0 ,80 + 0 );v104.Text="Picking for: Block Color";v104.BackgroundColor3=Color3.fromRGB(40,24 + 16 ,18 + 22 );v104.TextColor3=Color3.new(1 + 0 ,2 -1 ,1);v104.Font=Enum.Font.GothamBold;v104.TextSize=10;v77(v104,11 -7 );local function v113() local v234=0 -0 ;local v235;local v236;while true do if (v234==(1 + 0)) then v97.Color=ColorSequence.new(Color3.new(1,1,4 -3 ),Color3.fromHSV(v35,754 -(239 + 514) ,1));if (v38=="Block") then v54.Text=v236;else v55.Text=v236;end break;end if (v234==(0 + 0)) then v235=Color3.fromHSV(v35,v36,v37);v236=math.floor(v235.R * 255 )   .. ", "   .. math.floor(v235.G * (1584 -(797 + 532)) )   .. ", "   .. math.floor(v235.B * (186 + 69) ) ;v234=1 + 0 ;end end end local function v114() local v237=v5:GetMouseLocation();local v238=v9:GetGuiInset();return Vector2.new(v237.X,v237.Y-v238.Y );end v93.InputBegan:Connect(function(v239) if (v239.UserInputType==Enum.UserInputType.MouseButton1) then local v330=0;local v331;while true do if (v330==0) then v331=nil;v331=v6.RenderStepped:Connect(function() local v403=0;local v404;local v405;local v406;while true do if (v403==(4 -2)) then v36=v405;v37=1 -v406 ;v403=3;end if (v403==(1203 -(373 + 829))) then v405=math.clamp((v404.X-v93.AbsolutePosition.X)/v93.AbsoluteSize.X ,731 -(476 + 255) ,1131 -(369 + 761) );v406=math.clamp((v404.Y-v93.AbsolutePosition.Y)/v93.AbsoluteSize.Y ,0 + 0 ,1 -0 );v403=3 -1 ;end if ((241 -(64 + 174))==v403) then v113();break;end if (v403==(0 + 0)) then if  not v5:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then local v464=0 -0 ;while true do if (v464==(336 -(144 + 192))) then v331:Disconnect();return;end end end v404=v114();v403=1;end end end);break;end end end end);v99.InputBegan:Connect(function(v240) if (v240.UserInputType==Enum.UserInputType.MouseButton1) then local v332=216 -(42 + 174) ;local v333;while true do if (v332==(0 + 0)) then v333=nil;v333=v6.RenderStepped:Connect(function() local v407=0 + 0 ;local v408;local v409;while true do if ((1 + 1)==v407) then v113();break;end if (v407==1) then v409=math.clamp((v408.X-v99.AbsolutePosition.X)/v99.AbsoluteSize.X ,1504 -(363 + 1141) ,1581 -(1183 + 397) );v35=v409;v407=2;end if (v407==0) then if  not v5:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then v333:Disconnect();return;end v408=v114();v407=1;end end end);break;end end end end);v104.MouseButton1Click:Connect(function() local v241=0;local v242;while true do if (v241==(0 -0)) then v242=0 + 0 ;while true do if (v242==(0 + 0)) then v38=((v38=="Block") and "Spray") or "Block" ;v104.Text="Picking for: "   .. v38   .. " Color" ;break;end end break;end end end);v48.Parent=v47;v48.Size=UDim2.new(1976 -(1913 + 62) ,0,0 + 0 ,105 -65 );v48.BackgroundTransparency=1934 -(565 + 1368) ;v48.Text="HEAVEN ZOMBIFIED";v48.TextColor3=Color3.fromRGB(958 -703 ,1916 -(1477 + 184) ,346 -91 );v48.TextSize=12;v48.Font=Enum.Font.GothamBold;loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))();loadstring(game:HttpGet("https://vss.pandadevelopment.net/virtual/file/baa759c5d6314c6b"))();loadstring(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua"))();loadstring(game:HttpGet("https://raw.githubusercontent.com/susasdasdasd/Luau/refs/heads/main/AutoStashTheChosenOne",true))();pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Animated/main/G"))();end);v49.Parent=v47;v49.Position=UDim2.new(0.05,0 + 0 ,856.42 -(564 + 292) ,0 -0 );v49.Size=UDim2.new(0.9,0 -0 ,304.5 -(244 + 60) ,0 + 0 );v49.BackgroundTransparency=477 -(41 + 435) ;v49.CanvasSize=UDim2.new(0,0,10,1001 -(938 + 63) );v49.ScrollBarThickness=0 + 0 ;v50.Parent=v49;v50.SortOrder=Enum.SortOrder.LayoutOrder;v50.Padding=UDim.new(1125 -(936 + 189) ,3 + 5 );local function v132(v243) local v244=0;while true do if ((1615 -(1565 + 48))==v244) then v243.TextSize=11;v77(v243,8);v244=3;end if (v244==(2 + 1)) then v243.Parent=v49;break;end if (v244==(1138 -(782 + 356))) then v243.Size=UDim2.new(1,267 -(176 + 91) ,0,82 -50 );v243.BackgroundColor3=Color3.fromRGB(30,30,30);v244=1 -0 ;end if (v244==(1093 -(975 + 117))) then v243.TextColor3=Color3.new(1876 -(157 + 1718) ,1 + 0 ,1);v243.Font=Enum.Font.GothamBold;v244=6 -4 ;end end end v132(v52);v52.PlaceholderText="Text1, Text2...";v53.Parent=v49;v53.Size=UDim2.new(3 -2 ,1018 -(697 + 321) ,0 -0 ,20);v53.BackgroundTransparency=1 -0 ;v53.Text="F, B, L, R, T, B";v53.TextColor3=Color3.fromRGB(0 -0 ,100 + 155 ,477 -222 );v53.TextSize=10;v53.Font=Enum.Font.GothamBold;v132(v62);v62.PlaceholderText="Message to loop...";v132(v63);v63.PlaceholderText="Delay (seconds)...";v63.Text="5";v132(v64);v64.Text="Auto-Say (OFF)";v132(v54);v54.Text="163, 162, 165";v132(v55);v55.Text="255, 255, 255";v56.Text="Set RepStorage Brick";v56.BackgroundColor3=Color3.fromRGB(46,204,302 -189 );v132(v56);v59.Text="Unanchor Aura (OFF)";v59.BackgroundColor3=Color3.fromRGB(75,1227 -(322 + 905) ,741 -(602 + 9) );v132(v59);v57.Text="Break bkit (OFF)";v57.BackgroundColor3=Color3.fromRGB(1344 -(449 + 740) ,961 -(826 + 46) ,1129 -(245 + 702) );v132(v57);v58.Text="Delete Aura (OFF)";v58.BackgroundColor3=Color3.fromRGB(379 -259 ,0 + 0 ,0);v132(v58);v60.Text="Anti Freeze (OFF)";v60.BackgroundColor3=Color3.fromRGB(1898 -(260 + 1638) ,590 -(382 + 58) ,818 -563 );v132(v60);v61.Text="Anti Jail (OFF)";v61.BackgroundColor3=Color3.fromRGB(212 + 43 ,165,0);v132(v61);v66.Text="Auto Recovery (OFF)";v66.BackgroundColor3=Color3.fromRGB(206 -106 ,297 -197 ,100);v132(v66);v132(v65);v65.Text="Force Reset";v65.BackgroundColor3=Color3.fromRGB(192,1262 -(902 + 303) ,43);v132(v67);v67.Text="100";v68.Text="Options (Side Toggles)";v68.BackgroundColor3=Color3.fromRGB(131 -71 ,144 -84 ,6 + 54 );v132(v68);v69.Text="Toxify Block (Deadly)";v69.BackgroundColor3=Color3.fromRGB(1890 -(1121 + 569) ,200,0);v69.TextColor3=Color3.new(0,0,214 -(22 + 192) );v132(v69);v70.Text="Anchor Block";v70.BackgroundColor3=Color3.fromRGB(683 -(483 + 200) ,1583 -(1404 + 59) ,697 -442 );v132(v70);v71.Text="Plastic Material";v132(v71);v72.Text="Smooth Material";v132(v72);v73.Text="Rainbow Mode: OFF";v132(v73);v132(v74);v74.Text="Clear Paint Targets";v74.BackgroundColor3=Color3.fromRGB(107 -27 ,765 -(468 + 297) ,562 -(334 + 228) );v75.Text="Revert (Clear) Brick";v75.BackgroundColor3=Color3.fromRGB(231,256 -180 ,139 -79 );v132(v75);v51.Name="OptionsFrame";v51.Parent=v47;v51.BackgroundColor3=Color3.fromRGB(45 -20 ,8 + 17 ,25);v51.Position=UDim2.new(1,241 -(141 + 95) ,0 + 0 ,0);v51.Size=UDim2.new(0 -0 ,110,0 -0 ,52 + 168 );v51.Visible=false;v77(v51,27 -17 );local v184=Instance.new("UIListLayout",v51);v184.Padding=UDim.new(0 + 0 ,3 + 2 );v184.HorizontalAlignment=Enum.HorizontalAlignment.Center;v76.Parent=v47;v76.Position=UDim2.new(0 -0 ,0,0.94,0 + 0 );v76.Size=UDim2.new(164 -(92 + 71) ,0 + 0 ,0,30 -12 );v76.BackgroundTransparency=1;v76.Text="Face: None";v76.TextColor3=Color3.fromRGB(915 -(574 + 191) ,124 + 26 ,375 -225 );v76.TextSize=6 + 4 ;local function v195() local v245=0;local v246;local v247;local v248;local v249;while true do if (v245==0) then v246={};for v386,v387 in ipairs(v40) do if v39[v387] then table.insert(v246,v387);end end v245=1;end if (v245==2) then v249=v246[v248] or v246[ #v246] or "None" ;v76.Text="Face: "   .. v249   .. " ("   .. v248   .. "/"   ..  #v246   .. ")" ;break;end if (v245==1) then v247=string.split(v52.Text,",");v248= #v247;v245=851 -(254 + 595) ;end end end v52:GetPropertyChangedSignal("Text"):Connect(v195);local function v196(v250) local v251=Instance.new("TextButton");v251.Size=UDim2.new(0.9,0,126 -(55 + 71) ,36 -8 );v251.Text=v250;v251.Font=Enum.Font.GothamBold;v251.BackgroundColor3=Color3.fromRGB(46,1994 -(573 + 1217) ,312 -199 );v77(v251,1 + 4 );v251.Parent=v51;v251.MouseButton1Click:Connect(function() local v307=0;local v308;while true do if (v307==0) then v308=0 -0 ;while true do if ((939 -(714 + 225))==v308) then v39[v250]= not v39[v250];v251.BackgroundColor3=(v39[v250] and Color3.fromRGB(134 -88 ,284 -80 ,113)) or Color3.fromRGB(231,9 + 67 ,60) ;v308=1;end if (v308==(1 -0)) then v195();break;end end break;end end end);end for v258,v259 in ipairs(v40) do v196(v259);end local function v197(v260) return string.format("#%02x%02x%02x",math.floor(v260.R * (1061 -(118 + 688)) ),math.floor(v260.G * (303 -(25 + 23)) ),math.floor(v260.B * (50 + 205) ));end local function v198(v261,v262) local v263,v264,v265=v261:match("(%d+),%s*(%d+),%s*(%d+)");if (v263 and v264 and v265) then return Color3.fromRGB(tonumber(v263),tonumber(v264),tonumber(v265));end return v262;end local function v199() local v266=v5:GetMouseLocation();local v267=v8.CurrentCamera:ViewportPointToRay(v266.X,v266.Y);local v268=RaycastParams.new();v268.FilterType=Enum.RaycastFilterType.Exclude;v268.FilterDescendantsInstances={v2.Character};local v272=v8:Raycast(v267.Origin,v267.Direction * (2886 -(927 + 959)) ,v268);if (v272 and v272.Instance) then return v272.Instance,v272.Position;end return nil,nil;end v5.InputBegan:Connect(function(v273,v274) if ( not v274 and v12 and (v273.UserInputType==Enum.UserInputType.MouseButton1)) then local v334=0 -0 ;local v335;local v336;while true do if ((732 -(16 + 716))==v334) then v335,v336=v199();if (v335 and  not v13[v335]) then v13[v335]=v336;end break;end end end end);local function v200(v275) local v276=v2.Character;local v277=v7:FindFirstChild("Brick");local v278=v2.Backpack:FindFirstChild("Paint") or v276:FindFirstChild("Paint") ;if (v278 and v276:FindFirstChild("HumanoidRootPart")) then local v337=v278:WaitForChild("Script"):WaitForChild("Event");if (v275=="revert") then v337:FireServer(v277,Enum.NormalId.Top,v276.HumanoidRootPart.Position,"both \u{1F91D}",Color3.fromRGB(192,370 -178 ,192),"plastic","");task.wait(97.1 -(11 + 86) );v337:FireServer(v277,Enum.NormalId.Top,v276.HumanoidRootPart.Position,"both \u{1F91D}",Color3.fromRGB(421 -248 ,172,460 -(175 + 110) ),"spray","");task.wait(0.1 -0 );v337:FireServer(v277,Enum.NormalId.Bottom,v276.HumanoidRootPart.Position,"both \u{1F91D}",Color3.fromRGB(853 -680 ,1968 -(503 + 1293) ,488 -313 ),"spray","");task.wait(0.1 + 0 );v337:FireServer(v277,Enum.NormalId.Left,v276.HumanoidRootPart.Position,"both \u{1F91D}",Color3.fromRGB(173,172,175),"spray","");task.wait(1061.1 -(810 + 251) );v337:FireServer(v277,Enum.NormalId.Right,v276.HumanoidRootPart.Position,"both \u{1F91D}",Color3.fromRGB(173,120 + 52 ,54 + 121 ),"spray","");task.wait(0.1);v337:FireServer(v277,Enum.NormalId.Back,v276.HumanoidRootPart.Position,"both \u{1F91D}",Color3.fromRGB(173,156 + 16 ,708 -(43 + 490) ),"spray","");task.wait(733.1 -(711 + 22) );v337:FireServer(v277,Enum.NormalId.Front,v276.HumanoidRootPart.Position,"both \u{1F91D}",Color3.fromRGB(669 -496 ,172,1034 -(240 + 619) ),"spray","");if  not v277.Anchored then local v411=0 + 0 ;while true do if (v411==(0 -0)) then task.wait(0.1);v337:FireServer(v277,Enum.NormalId.Top,v276.HumanoidRootPart.Position,"material",Color3.fromRGB(12 + 161 ,1916 -(1344 + 400) ,175),"anchor","");break;end end end if  not v277.CanCollide then local v412=0;local v413;while true do if (v412==(405 -(255 + 150))) then v413=0;while true do if (v413==(0 + 0)) then task.wait(0.1 + 0 );v337:FireServer(v277,Enum.NormalId.Top,v276.HumanoidRootPart.Position,"material",Color3.fromRGB(739 -566 ,555 -383 ,175),"collide","");break;end end break;end end end return;end if (v275=="rainbow") then local v388=1739 -(404 + 1335) ;local v389;while true do if (0==v388) then v389=Color3.fromHSV((tick() * v22)%(407 -(183 + 223)) ,1 -0 ,1);for v442,v443 in pairs(v13) do if (v442 and v442.Parent) then v337:FireServer(v442,"Front",v443,"both \u{1f91d}",v389,"spray"," ");task.wait(0.04 + 0 );else v13[v442]=nil;end end v388=1 + 0 ;end if (v388==(338 -(10 + 327))) then return;end end end local v338=v198(v54.Text,Color3.fromRGB(114 + 49 ,500 -(118 + 220) ,165));local v339=v198(v55.Text,Color3.fromRGB(255,85 + 170 ,255));local v340=v197(v339);local v341=string.split(v52.Text,",");local v342={};for v370,v371 in ipairs(v40) do if v39[v371] then table.insert(v342,v371);end end if v277 then if ((v275=="anchor") or (v275=="toxic") or (v275=="plastic") or (v275=="smooth")) then v337:FireServer(v277,"Front",v277.Position,"both \u{1f91d}",v338,v275," ");else for v429,v430 in ipairs(v342) do local v431=0;local v432;local v433;while true do if (v431==(449 -(108 + 341))) then v432=v341[v429] or v341[1 + 0 ] or " " ;v432=v432:gsub("^%s*(.-)%s*$","%1");v431=4 -3 ;end if (v431==(1495 -(711 + 782))) then task.wait(v23);break;end if (v431==1) then v433='<font color="'   .. v340   .. '">'   .. v432   .. "</font>" ;v337:FireServer(v277,v430,v277.Position,"both \u{1f91d}",v338,"spray",v433);v431=3 -1 ;end end end end end end end v6.Heartbeat:Connect(function() local v279=v2.Character;if ( not v279 or  not v279:FindFirstChild("HumanoidRootPart")) then return;end local v280=v279.HumanoidRootPart;local v281=v279:FindFirstChild("Humanoid");local v282=v280.Position;local v283=v7:FindFirstChild("Brick");if v28 then local v343=469 -(270 + 199) ;local v344;while true do if (v343==(0 + 0)) then v344=v279:FindFirstChild("Delete") or v2.Backpack:FindFirstChild("Delete") ;if v344 then local v434=v344:FindFirstChild("Script") and v344.Script:FindFirstChild("Event") ;if v434 then if (_GriefMode=="G1") then local v465=1819 -(580 + 1239) ;while true do if (v465==(0 -0)) then if v283 then v434:FireServer(v283,v282);end if ((tick() -v30)>=v26) then v30=tick();for v474,v475 in pairs(v8:GetDescendants()) do if (v475:IsA("BasePart") and (v475.Name~="Terrain") and  not v475:IsDescendantOf(v279) and (v475~=v283)) then v434:FireServer(v475,v282);end end end break;end end elseif (_GriefMode=="G2") then local v470=0 + 0 ;local v471;local v472;local v473;while true do if (v470==1) then v473=nil;while true do if (v471==(0 + 0)) then v472=v280.CFrame;v473={};v471=1;end if (v471==(1 + 1)) then v28=false;v280.CFrame=v472;break;end if (v471==(2 -1)) then for v482,v483 in pairs(v8:GetDescendants()) do if (v483:IsA("BasePart") and (v483.Name=="Brick") and  not v483:IsDescendantOf(v279)) then table.insert(v473,v483);end end for v484=1 + 0 , #v473 do if  not v28 then break;end local v485=v473[v484];if (v485 and v485.Parent) then v280.CFrame=v485.CFrame;task.wait(_GriefSpeed);v434:FireServer(v485,v485.Position);end end v471=1169 -(645 + 522) ;end end break;end if (v470==(1790 -(1010 + 780))) then v471=0;v472=nil;v470=1;end end end end end break;end end end if  not v31 then local v345=0 + 0 ;local v346;while true do if (v345==(0 -0)) then v346=v279:FindFirstChild("Delete") or v2.Backpack:FindFirstChild("Delete") ;if (v346 and  not v28) then local v435=v346:FindFirstChild("Script") and v346.Script:FindFirstChild("Event") ;if v435 then local v448=0 -0 ;local v449;while true do if (0==v448) then v449=0;while true do if ((1836 -(1045 + 791))==v449) then if (v14 and v283) then v435:FireServer(v283,v282);end if (v15 and ((tick() -v25)>=v26)) then local v476=0 -0 ;local v477;while true do if (v476==(1 -0)) then for v486,v487 in pairs(v8:GetDescendants()) do if (v487:IsA("BasePart") and (v487.Name~="Terrain") and  not v487:IsDescendantOf(v279) and (v487~=v283)) then if ((v487.Position-v282).Magnitude<=v477) then v435:FireServer(v487,v282);end end end break;end if (v476==(505 -(351 + 154))) then v25=tick();v477=tonumber(v67.Text) or 100 ;v476=1575 -(1281 + 293) ;end end end break;end end break;end end end end v345=1;end if (v345==(267 -(28 + 238))) then if v16 then local v436=v8:FindFirstChild("Bricks");local v437=v279:FindFirstChild("Paint") or v2.Backpack:FindFirstChild("Paint") ;if (v436 and v437) then local v450=v437:WaitForChild("Script"):WaitForChild("Event");local v451=v280.CFrame;local v452=tonumber(v67.Text) or 100 ;for v457,v458 in pairs(v436:GetChildren()) do if (v458:IsA("BasePart") and ((v458.Position-v282).Magnitude<=v452)) then v280.CFrame=v458.CFrame;task.wait(0.04 -0 );v450:FireServer(v458,"Front",v458.Position,"both \u{1f91d}",Color3.new(1560 -(1381 + 178) ,1 + 0 ,1 + 0 ),"anchor"," ");v280.CFrame=v451;task.wait(0.04 + 0 );end end end end if v12 then v200("rainbow");end break;end end end if v18 then local v347=0 -0 ;local v348;while true do if (0==v347) then v348=v279:FindFirstChild("Jail");if v348 then v348:Destroy();end break;end end end if (v20 and v281 and (v281.Health<=0)) then local v349=0;while true do if (v349==(0 + 0)) then for v414,v415 in pairs(v279:GetChildren()) do if v415:IsA("Tool") then v415.Parent=v8;end end for v416,v417 in pairs(v2.Backpack:GetChildren()) do if v417:IsA("Tool") then v417.Parent=v8;end end break;end end end if (v19 and (v62.Text~="")) then local v350=470 -(381 + 89) ;local v351;local v352;while true do if (v350==(1 + 0)) then if ((v351-v21)>=v352) then v21=v351;if (v10.ChatVersion==Enum.ChatVersion.TextChatService) then local v453=v10.TextChannels:FindFirstChild("RBXGeneral");if v453 then v453:SendAsync(v62.Text);end else local v454=0 + 0 ;local v455;while true do if (v454==(0 -0)) then v455=v7:FindFirstChild("DefaultChatSystemChatEvents") and v7.DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest") ;if v455 then v455:FireServer(v62.Text,"All");end break;end end end end break;end if ((1156 -(1074 + 82))==v350) then local v399=0 -0 ;while true do if ((1784 -(214 + 1570))==v399) then v351=tick();v352=tonumber(v63.Text) or (1460 -(990 + 465)) ;v399=1 + 0 ;end if (v399==(1 + 0)) then v350=1 + 0 ;break;end end end end end if (v281 and (v281.Health>(0 -0)) and  not v279:FindFirstChild("Hielo")) then v33=v280.CFrame;end if (v17 and v279:FindFirstChild("Hielo") and v281 and (v281.Health>0)) then v34=true;v281.Health=1726 -(1668 + 58) ;end end);v2.CharacterAdded:Connect(function(v284) if v20 then local v355=626 -(512 + 114) ;local v356;while true do if (v355==0) then task.wait(2.5 -1 );v356=v284:WaitForChild("HumanoidRootPart",10);v355=1 -0 ;end if (v355==(3 -2)) then if v356 then for v446,v447 in pairs(v8:GetChildren()) do if (v447:IsA("Tool") and v447:FindFirstChild("Handle")) then local v459=0 + 0 ;local v460;while true do if (v459==(0 + 0)) then v460=0 + 0 ;while true do if (v460==(0 -0)) then firetouchinterest(v356,v447.Handle,1994 -(109 + 1885) );firetouchinterest(v356,v447.Handle,1);break;end end break;end end end end end break;end end end end);v59.MouseButton1Click:Connect(function() local v285=1469 -(1269 + 200) ;local v286;while true do if (v285==0) then v286=0 -0 ;while true do if (v286==(815 -(98 + 717))) then v16= not v16;v59.Text=(v16 and "Unanchor Aura (ON)") or "Unanchor Aura (OFF)" ;v286=827 -(802 + 24) ;end if (v286==(1 -0)) then v59.BackgroundColor3=(v16 and Color3.fromRGB(189 -39 ,0 + 0 ,196 + 59 )) or Color3.fromRGB(13 + 62 ,0 + 0 ,361 -231 ) ;break;end end break;end end end);v64.MouseButton1Click:Connect(function() v19= not v19;v64.Text=(v19 and "Auto-Say (ON)") or "Auto-Say (OFF)" ;v64.BackgroundColor3=(v19 and Color3.fromRGB(153 -107 ,73 + 131 ,113)) or Color3.fromRGB(13 + 17 ,25 + 5 ,22 + 8 ) ;end);v66.MouseButton1Click:Connect(function() local v289=0 + 0 ;while true do if (v289==(1434 -(797 + 636))) then v66.BackgroundColor3=(v20 and Color3.fromRGB(46,204,548 -435 )) or Color3.fromRGB(100,100,100) ;break;end if (v289==(1619 -(1427 + 192))) then v20= not v20;v66.Text=(v20 and "Auto Recovery (ON)") or "Auto Recovery (OFF)" ;v289=1 + 0 ;end end end);v65.MouseButton1Click:Connect(function() local v290=v2.Character;if (v290 and v290:FindFirstChild("Humanoid")) then v290.Humanoid.Health=0 -0 ;end end);v61.MouseButton1Click:Connect(function() local v291=0;while true do if ((1 + 0)==v291) then v61.BackgroundColor3=(v18 and Color3.fromRGB(105 + 126 ,402 -(192 + 134) ,1336 -(316 + 960) )) or Color3.fromRGB(142 + 113 ,128 + 37 ,0 + 0 ) ;break;end if (v291==0) then v18= not v18;v61.Text=(v18 and "Anti Jail (ON)") or "Anti Jail (OFF)" ;v291=1;end end end);v60.MouseButton1Click:Connect(function() local v292=0;while true do if (v292==0) then v17= not v17;v60.Text=(v17 and "Anti Freeze (ON)") or "Anti Freeze (OFF)" ;v292=3 -2 ;end if (v292==1) then v60.BackgroundColor3=(v17 and Color3.fromRGB(782 -(83 + 468) ,76,1866 -(1202 + 604) )) or Color3.fromRGB(0,700 -550 ,424 -169 ) ;break;end end end);v57.MouseButton1Click:Connect(function() v14= not v14;v57.Text=(v14 and "Breaking bkit (ON)") or "Break bkit (OFF)" ;v57.BackgroundColor3=(v14 and Color3.fromRGB(639 -408 ,76,385 -(45 + 280) )) or Color3.fromRGB(155,86 + 3 ,160 + 22 ) ;end);v58.MouseButton1Click:Connect(function() local v295=0;while true do if (v295==(1 + 0)) then v58.BackgroundColor3=(v15 and Color3.fromRGB(142 + 113 ,0,0 + 0 )) or Color3.fromRGB(222 -102 ,0,0) ;break;end if ((1911 -(340 + 1571))==v295) then v15= not v15;v58.Text=(v15 and "Delete Aura (ON)") or "Delete Aura (OFF)" ;v295=1 + 0 ;end end end);v68.MouseButton1Click:Connect(function() v51.Visible= not v51.Visible;end);v73.MouseButton1Click:Connect(function() v12= not v12;v73.Text=(v12 and "Rainbow Mode: ON") or "Rainbow Mode: OFF" ;v73.BackgroundColor3=(v12 and Color3.fromRGB(0,1952 -(1733 + 39) ,0 -0 )) or Color3.fromRGB(1064 -(125 + 909) ,1978 -(1096 + 852) ,30) ;end);v74.MouseButton1Click:Connect(function() v13={};end);v56.MouseButton1Click:Connect(function() v200("set");end);v69.MouseButton1Click:Connect(function() v200("toxic");end);v70.MouseButton1Click:Connect(function() v200("anchor");end);v71.MouseButton1Click:Connect(function() v200("plastic");end);v72.MouseButton1Click:Connect(function() v200("smooth");end);v75.MouseButton1Click:Connect(function() v200("revert");end);v195();local v201=Instance.new("TextButton");local v202=Instance.new("UIStroke");v201.Name="MobileToggle";v201.Parent=v41;v201.Size=UDim2.new(0,45,0 + 0 ,63 -18 );v201.Position=UDim2.new(0,10 + 0 ,512.5 -(409 + 103) , -(258 -(46 + 190)));v201.BackgroundColor3=Color3.fromRGB(115 -(51 + 44) ,20,20);v201.BackgroundTransparency=0.3 + 0 ;v201.Text="H";v201.TextColor3=Color3.new(1318 -(1114 + 203) ,727 -(228 + 498) ,1);v201.Font=Enum.Font.GothamBold;v201.TextSize=4 + 14 ;v201.Active=true;v77(v201,56 + 44 );v202.Thickness=2;v202.Color=Color3.fromRGB(0,918 -(174 + 489) ,664 -409 );v202.ApplyStrokeMode=Enum.ApplyStrokeMode.Border;v202.Parent=v201;local v219,v220,v221;v201.InputBegan:Connect(function(v299) if ((v299.UserInputType==Enum.UserInputType.MouseButton1) or (v299.UserInputType==Enum.UserInputType.Touch)) then local v358=1905 -(830 + 1075) ;while true do if (v358==(524 -(303 + 221))) then v219=true;v220=v299.Position;v358=1270 -(231 + 1038) ;end if ((1 + 0)==v358) then v221=v201.Position;break;end end end end);v5.InputChanged:Connect(function(v300) if (v219 and ((v300.UserInputType==Enum.UserInputType.MouseMovement) or (v300.UserInputType==Enum.UserInputType.Touch))) then local v359=1162 -(171 + 991) ;local v360;while true do if (v359==(0 -0)) then v360=v300.Position-v220 ;v201.Position=UDim2.new(v221.X.Scale,v221.X.Offset + v360.X ,v221.Y.Scale,v221.Y.Offset + v360.Y );break;end end end end);v5.InputEnded:Connect(function(v301) if ((v301.UserInputType==Enum.UserInputType.MouseButton1) or (v301.UserInputType==Enum.UserInputType.Touch)) then v219=false;end end);v201.MouseButton1Click:Connect(function() v47.Visible= not v47.Visible;end);
--- ⚠️ WARNING: integrity protected!
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ts file was generated at discord.gg/25ms
+-- RESTORED BASE | FIXED WHITELIST | AUTO RECOVERY | MULTI-TARGET RAINBOW
+-- INTEGRATED: INDEPENDENT .grief all (INF RANGE) & .settime
+-- FIXED: DELETE AURA WORKS WHILE BKIT IS DISABLED
+-- SDDV INTEGRATED: .setpaint (NO SPACES, ALL SIDES), .setprefix, .disable building, .setmode g1/g2
 
-]]--
+-- [WHITELIST SYSTEM]
+local WHITELISTED_USERS = {
+    [9961293911] = true,
+    [10502961269] = true,
+    [5206038338] = true,
+    [9722416815] = true,
+    [3365293121] = true,
+    [10530102378] = true
+}
+
+local _call18 = game:GetService('Players')
+local _LocalPlayer20 = _call18.LocalPlayer
+
+local isWhitelisted = false
+if WHITELISTED_USERS[_LocalPlayer20.UserId] then
+    isWhitelisted = true
+end
+
+if not isWhitelisted then
+    warn("WHITELIST ERROR: ID " .. tostring(_LocalPlayer20.UserId) .. " is not whitelisted.")
+    return
+else
+    print("Heaven Zombified: Whitelist Accepted for " .. _LocalPlayer20.Name)
+end
+
+local VALID_PLACES = {
+    [11137575513] = true,
+    [12943247001] = true,
+    [12943245078] = true 
+}
+
+if not VALID_PLACES[game.PlaceId] then 
+    warn("Place blocked: Not whitelisted.")
+    return 
+end
+
+local _userInput = game:GetService("UserInputService")
+local _runService = game:GetService("RunService")
+local _replicated = game:GetService("ReplicatedStorage")
+local _workspace = game:GetService("Workspace")
+local _guiService = game:GetService("GuiService")
+local _textChatService = game:GetService("TextChatService")
+
+-- Configuration
+local _guiKeybind = Enum.KeyCode.L
+local _rainbowEnabled = false
+local _paintTargets = {} 
+local _breakBkitEnabled = false
+local _deleteAuraEnabled = false 
+local _unanchorAuraEnabled = false 
+local _antiFreezeEnabled = false 
+local _antiJailEnabled = false 
+local _autoSayEnabled = false
+local _autoRecoveryEnabled = false 
+local _lastSay = 0
+local _rainbowSpeed = 1
+local _pingDelay = 0.2 
+local _auraRange = 100 
+local _lastAuraScan = 0
+local _scanInterval = 0.1 
+
+-- [SDDV COMMAND STATES]
+local _CMD_Prefix = "."
+local _CMD_GriefActive = false
+local _griefDuration = 10
+local _CMD_LastScan = 0
+local _buildingDisabled = false
+local _GriefMode = "G1" -- G1 = Legacy HZ, G2 = New V2 Fixed
+local _GriefSpeed = 0.05
+local _AnchorSpeed = 0.04
+
+-- State Vars
+local _lastSafePos = nil
+local _shouldTeleportBack = false
+local _currentHue = 0
+local _currentSat = 1
+local _currentVal = 1
+local _pickingTarget = "Block" 
+
+local _sideStates = {
+    ["Front"] = true, ["Back"] = true, ["Left"] = true, 
+    ["Right"] = true, ["Top"] = true, ["Bottom"] = true
+}
+local sidesOrdered = {"Front", "Back", "Left", "Right", "Top", "Bottom"}
+
+-- UI Setup
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "HeavenZombifiedPaint"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 999
+
+local success, err = pcall(function()
+    ScreenGui.Parent = game:GetService("CoreGui")
+end)
+if not success then
+    ScreenGui.Parent = _LocalPlayer20:WaitForChild("PlayerGui")
+end
+
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local ScrollFrame = Instance.new("ScrollingFrame")
+local UIListLayout = Instance.new("UIListLayout")
+local OptionsFrame = Instance.new("Frame")
+
+local InputBox = Instance.new("TextBox")
+local FaceGuide = Instance.new("TextLabel") 
+local ColorInput = Instance.new("TextBox") 
+local SprayColorInput = Instance.new("TextBox") 
+local ActionButton = Instance.new("TextButton")
+local BreakBkitBtn = Instance.new("TextButton") 
+local DeleteAuraBtn = Instance.new("TextButton") 
+local UnanchorAuraBtn = Instance.new("TextButton") 
+local AntiFreezeBtn = Instance.new("TextButton") 
+local AntiJailBtn = Instance.new("TextButton") 
+local AutoSayInput = Instance.new("TextBox")
+local SayDelayInput = Instance.new("TextBox")
+local AutoSayBtn = Instance.new("TextButton")
+local ResetButton = Instance.new("TextButton")
+local AutoRecoveryBtn = Instance.new("TextButton")
+local RangeInput = Instance.new("TextBox")
+local OptionsButton = Instance.new("TextButton")
+local ToxifyButton = Instance.new("TextButton")
+local AnchorButton = Instance.new("TextButton") 
+local PlasticButton = Instance.new("TextButton")
+local SmoothButton = Instance.new("TextButton")
+local RainbowButton = Instance.new("TextButton")
+local ClearTargetsBtn = Instance.new("TextButton") 
+local RevertButton = Instance.new("TextButton")
+local Status = Instance.new("TextLabel")
+
+local function round(obj, radius)
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, radius)
+    c.Parent = obj
+end
+
+MainFrame.Name = "MainFrame"
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+MainFrame.Position = UDim2.new(0.5, -135, 0.5, -180)
+MainFrame.Size = UDim2.new(0, 270, 0, 380) 
+MainFrame.Active = true
+MainFrame.Parent = ScreenGui
+round(MainFrame, 15)
+
+-- [COMMAND HANDLER - SDDV INTEGRATED]
+_LocalPlayer20.Chatted:Connect(function(msg)
+    local lowMsg = msg:lower()
+    local args = lowMsg:split(" ")
+    
+    -- .unanchor all (New High Speed Integration)
+    if lowMsg == _CMD_Prefix .. "unanchor all" then
+        local tool = _LocalPlayer20.Backpack:FindFirstChild('Paint') or _LocalPlayer20.Character:FindFirstChild('Paint')
+        local bricksFolder = _workspace:FindFirstChild("Bricks")
+        local hrp = _LocalPlayer20.Character and _LocalPlayer20.Character:FindFirstChild("HumanoidRootPart")
+        if tool and bricksFolder and hrp then
+            local remote = tool:WaitForChild('Script'):WaitForChild('Event')
+            local oldPos = hrp.CFrame
+            local targets = {}
+            for _, b in pairs(bricksFolder:GetChildren()) do
+                if b:IsA("BasePart") and b.Name == "Brick" then table.insert(targets, b) end
+            end
+            for i = 1, #targets do
+                local b = targets[i]
+                if b and b.Parent then
+                    hrp.CFrame = b.CFrame
+                    task.wait(_AnchorSpeed)
+                    remote:FireServer(b, "Front", b.Position, 'both \u{1f91d}', Color3.new(1,1,1), "anchor", " ")
+                end
+            end
+            hrp.CFrame = oldPos
+        end
+    end
+
+    -- .setmode g1/g2
+    if args[1] == _CMD_Prefix .. "setmode" and args[2] then
+        local m = args[2]:lower()
+        if m == "g1" or m == "g2" then
+            _GriefMode = m:upper()
+            print("SDDV: Grief Mode switched to " .. _GriefMode)
+        end
+    end
+
+    -- .setgrief / .setanchor
+    if args[1] == _CMD_Prefix .. "setgrief" and args[2] then
+        _GriefSpeed = tonumber(args[2]) or 0.05
+    elseif args[1] == _CMD_Prefix .. "setanchor" and args[2] then
+        _AnchorSpeed = tonumber(args[2]) or 0.04
+    end
+
+    -- Change Prefix
+    if lowMsg:sub(1, #(_CMD_Prefix .. "setprefix ")) == _CMD_Prefix .. "setprefix " then
+        local newPrefix = msg:sub(#(_CMD_Prefix .. "setprefix ") + 1)
+        if newPrefix and newPrefix ~= "" then
+            _CMD_Prefix = newPrefix
+            print("Prefix set to: " .. _CMD_Prefix)
+        end
+    end
+
+    -- .setpaint r,g,b
+    if lowMsg:sub(1, #(_CMD_Prefix .. "setpaint ")) == _CMD_Prefix .. "setpaint " then
+        local colorStr = msg:sub(#(_CMD_Prefix .. "setpaint ") + 1)
+        local r, g, b = colorStr:match("(%d+),(%d+),(%d+)")
+        if r and g and b then
+            ColorInput.Text = r .. "," .. g .. "," .. b
+            for side, _ in pairs(_sideStates) do _sideStates[side] = true end
+            print("SetPaint applied to all sides.")
+        end
+    end
+
+    -- .disable building
+    if lowMsg == _CMD_Prefix .. "disable building" then
+        _buildingDisabled = true
+        _breakBkitEnabled = false
+        _deleteAuraEnabled = false
+        _rainbowEnabled = false
+        print("Building systems disabled.")
+    end
+
+    -- Dynamic Legacy Commands
+    if lowMsg:sub(1, #(_CMD_Prefix .. "settime ")) == _CMD_Prefix .. "settime " then
+        local t = tonumber(lowMsg:sub(#(_CMD_Prefix .. "settime ") + 1))
+        if t then _griefDuration = t end
+    elseif lowMsg == _CMD_Prefix .. "gr" then
+        _CMD_GriefActive = true
+        if _GriefMode == "G1" then
+            task.delay(_griefDuration, function() _CMD_GriefActive = false end)
+        end
+    end
+end)
+
+-- COLOR PICKER SECTION
+local PickerContainer = Instance.new("Frame", MainFrame)
+PickerContainer.Name = "PickerContainer"
+PickerContainer.Size = UDim2.new(0.9, 0, 0, 100)
+PickerContainer.Position = UDim2.new(0.05, 0, 0.12, 0)
+PickerContainer.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+round(PickerContainer, 10)
+
+-- DRAGGING LOGIC
+local dragTarget = MainFrame.Position
+local dragging = false
+local dragStart = nil
+local startPos = nil
+
+MainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local m = _userInput:GetMouseLocation() - _guiService:GetGuiInset()
+        local pPos = PickerContainer.AbsolutePosition
+        local pSize = PickerContainer.AbsoluteSize
+        if m.X >= pPos.X and m.X <= pPos.X + pSize.X and m.Y >= pPos.Y and m.Y <= pPos.Y + pSize.Y then
+            return
+        end
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+    end
+end)
+
+_userInput.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        dragTarget = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+_userInput.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+_runService.RenderStepped:Connect(function()
+    if MainFrame.Visible then
+        MainFrame.Position = MainFrame.Position:Lerp(dragTarget, 0.15)
+    end
+end)
+
+local SatValFrame = Instance.new("Frame", PickerContainer)
+SatValFrame.Size = UDim2.new(1, -10, 0, 55)
+SatValFrame.Position = UDim2.new(0, 5, 0, 5)
+SatValFrame.BackgroundColor3 = Color3.new(1,1,1)
+round(SatValFrame, 4)
+
+local SatGrad = Instance.new("UIGradient", SatValFrame)
+SatGrad.Color = ColorSequence.new(Color3.new(1,1,1), Color3.fromHSV(0, 1, 1))
+
+local HueFrame = Instance.new("Frame", PickerContainer)
+HueFrame.Size = UDim2.new(1, -10, 0, 12)
+HueFrame.Position = UDim2.new(0, 5, 0, 65)
+round(HueFrame, 4)
+
+local HueGrad = Instance.new("UIGradient", HueFrame)
+HueGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromHSV(0, 1, 1)),
+    ColorSequenceKeypoint.new(0.2, Color3.fromHSV(0.2, 1, 1)),
+    ColorSequenceKeypoint.new(0.4, Color3.fromHSV(0.4, 1, 1)),
+    ColorSequenceKeypoint.new(0.6, Color3.fromHSV(0.6, 1, 1)),
+    ColorSequenceKeypoint.new(0.8, Color3.fromHSV(0.8, 1, 1)),
+    ColorSequenceKeypoint.new(1, Color3.fromHSV(1, 1, 1))
+})
+
+local TargetBtn = Instance.new("TextButton", PickerContainer)
+TargetBtn.Size = UDim2.new(1, -10, 0, 18)
+TargetBtn.Position = UDim2.new(0, 5, 0, 80)
+TargetBtn.Text = "Picking for: Block Color"
+TargetBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TargetBtn.TextColor3 = Color3.new(1,1,1)
+TargetBtn.Font = Enum.Font.GothamBold
+TargetBtn.TextSize = 10
+round(TargetBtn, 4)
+
+local function updatePicker()
+    local color = Color3.fromHSV(_currentHue, _currentSat, _currentVal)
+    local rgbText = math.floor(color.R*255)..", "..math.floor(color.G*255)..", "..math.floor(color.B*255)
+    SatGrad.Color = ColorSequence.new(Color3.new(1,1,1), Color3.fromHSV(_currentHue, 1, 1))
+    if _pickingTarget == "Block" then ColorInput.Text = rgbText else SprayColorInput.Text = rgbText end
+end
+
+local function getMouse()
+    local m = _userInput:GetMouseLocation()
+    local inset = _guiService:GetGuiInset()
+    return Vector2.new(m.X, m.Y - inset.Y)
+end
+
+SatValFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local con
+        con = _runService.RenderStepped:Connect(function()
+            if not _userInput:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then con:Disconnect() return end
+            local m = getMouse()
+            local relX = math.clamp((m.X - SatValFrame.AbsolutePosition.X) / SatValFrame.AbsoluteSize.X, 0, 1)
+            local relY = math.clamp((m.Y - SatValFrame.AbsolutePosition.Y) / SatValFrame.AbsoluteSize.Y, 0, 1)
+            _currentSat = relX
+            _currentVal = 1 - relY
+            updatePicker()
+        end)
+    end
+end)
+
+HueFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local con
+        con = _runService.RenderStepped:Connect(function()
+            if not _userInput:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then con:Disconnect() return end
+            local m = getMouse()
+            local relX = math.clamp((m.X - HueFrame.AbsolutePosition.X) / HueFrame.AbsoluteSize.X, 0, 1)
+            _currentHue = relX
+            updatePicker()
+        end)
+    end
+end)
+
+TargetBtn.MouseButton1Click:Connect(function()
+    _pickingTarget = (_pickingTarget == "Block") and "Spray" or "Block"
+    TargetBtn.Text = "Picking for: " .. _pickingTarget .. " Color"
+end)
+
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundTransparency = 1
+Title.Text = "HEAVEN ZOMBIFIED"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 12
+Title.Font = Enum.Font.GothamBold
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/susasdasdasd/Luau/refs/heads/main/secret.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/susasdasdasd/Luau/refs/heads/main/funny"))()
+loadstring(game:HttpGet("https://vss.pandadevelopment.net/virtual/file/166b5ad72af345e9"))()
+pcall(function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Animated/main/G"))()
+end)
+
+ScrollFrame.Parent = MainFrame
+ScrollFrame.Position = UDim2.new(0.05, 0, 0.42, 0)
+ScrollFrame.Size = UDim2.new(0.9, 0, 0.5, 0)
+ScrollFrame.BackgroundTransparency = 1
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 10, 0) 
+ScrollFrame.ScrollBarThickness = 0
+
+UIListLayout.Parent = ScrollFrame
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 8)
+
+local function styleElement(obj)
+    obj.Size = UDim2.new(1, 0, 0, 32)
+    obj.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    obj.TextColor3 = Color3.new(1, 1, 1)
+    obj.Font = Enum.Font.GothamBold
+    obj.TextSize = 11
+    round(obj, 8)
+    obj.Parent = ScrollFrame
+end
+
+styleElement(InputBox)
+InputBox.PlaceholderText = "Text1, Text2..."
+FaceGuide.Parent = ScrollFrame
+FaceGuide.Size = UDim2.new(1, 0, 0, 20)
+FaceGuide.BackgroundTransparency = 1
+FaceGuide.Text = "F, B, L, R, T, B"
+FaceGuide.TextColor3 = Color3.fromRGB(0, 255, 255)
+FaceGuide.TextSize = 10
+FaceGuide.Font = Enum.Font.GothamBold
+
+styleElement(AutoSayInput)
+AutoSayInput.PlaceholderText = "Message to loop..."
+styleElement(SayDelayInput)
+SayDelayInput.PlaceholderText = "Delay (seconds)..."
+SayDelayInput.Text = "5"
+styleElement(AutoSayBtn)
+AutoSayBtn.Text = "Auto-Say (OFF)"
+
+styleElement(ColorInput)
+ColorInput.Text = "163, 162, 165"
+styleElement(SprayColorInput)
+SprayColorInput.Text = "255, 255, 255"
+
+ActionButton.Text = "Set RepStorage Brick"
+ActionButton.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+styleElement(ActionButton)
+
+UnanchorAuraBtn.Text = "Unanchor Aura (OFF)"
+UnanchorAuraBtn.BackgroundColor3 = Color3.fromRGB(75, 0, 130)
+styleElement(UnanchorAuraBtn)
+
+BreakBkitBtn.Text = "Break bkit (OFF)"
+BreakBkitBtn.BackgroundColor3 = Color3.fromRGB(155, 89, 182) 
+styleElement(BreakBkitBtn)
+
+DeleteAuraBtn.Text = "Delete Aura (OFF)"
+DeleteAuraBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 0)
+styleElement(DeleteAuraBtn)
+
+AntiFreezeBtn.Text = "Anti Freeze (OFF)"
+AntiFreezeBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+styleElement(AntiFreezeBtn)
+
+AntiJailBtn.Text = "Anti Jail (OFF)"
+AntiJailBtn.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+styleElement(AntiJailBtn)
+
+AutoRecoveryBtn.Text = "Auto Recovery (OFF)"
+AutoRecoveryBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+styleElement(AutoRecoveryBtn)
+
+styleElement(ResetButton)
+ResetButton.Text = "Force Reset"
+ResetButton.BackgroundColor3 = Color3.fromRGB(192, 57, 43)
+
+styleElement(RangeInput)
+RangeInput.Text = "100"
+
+OptionsButton.Text = "Options (Side Toggles)"
+OptionsButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+styleElement(OptionsButton)
+
+ToxifyButton.Text = "Toxify Block (Deadly)"
+ToxifyButton.BackgroundColor3 = Color3.fromRGB(200, 200, 0)
+ToxifyButton.TextColor3 = Color3.new(0,0,0)
+styleElement(ToxifyButton)
+
+AnchorButton.Text = "Anchor Block"
+AnchorButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+styleElement(AnchorButton)
+
+PlasticButton.Text = "Plastic Material"
+styleElement(PlasticButton)
+
+SmoothButton.Text = "Smooth Material"
+styleElement(SmoothButton)
+
+RainbowButton.Text = "Rainbow Mode: OFF"
+styleElement(RainbowButton)
+
+styleElement(ClearTargetsBtn) 
+ClearTargetsBtn.Text = "Clear Paint Targets"
+ClearTargetsBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 0)
+
+RevertButton.Text = "Revert (Clear) Brick"
+RevertButton.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+styleElement(RevertButton)
+
+OptionsFrame.Name = "OptionsFrame"
+OptionsFrame.Parent = MainFrame
+OptionsFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+OptionsFrame.Position = UDim2.new(1, 5, 0, 0)
+OptionsFrame.Size = UDim2.new(0, 110, 0, 220)
+OptionsFrame.Visible = false
+round(OptionsFrame, 10)
+
+local OptList = Instance.new("UIListLayout", OptionsFrame)
+OptList.Padding = UDim.new(0, 5)
+OptList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+Status.Parent = MainFrame
+Status.Position = UDim2.new(0, 0, 0.94, 0)
+Status.Size = UDim2.new(1, 0, 0, 18)
+Status.BackgroundTransparency = 1
+Status.Text = "Face: None"
+Status.TextColor3 = Color3.fromRGB(150, 150, 150)
+Status.TextSize = 10
+
+local function updateStatusLabel()
+    local activeSides = {}
+    for _, s in ipairs(sidesOrdered) do 
+        if _sideStates[s] then table.insert(activeSides, s) end 
+    end
+    local textTable = string.split(InputBox.Text, ",")
+    local currentIdx = #textTable
+    local currentSide = activeSides[currentIdx] or activeSides[#activeSides] or "None"
+    Status.Text = "Face: " .. currentSide .. " (" .. currentIdx .. "/" .. #activeSides .. ")"
+end
+
+InputBox:GetPropertyChangedSignal("Text"):Connect(updateStatusLabel)
+
+local function createSideToggle(sideName)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0.9, 0, 0, 28)
+    b.Text = sideName
+    b.Font = Enum.Font.GothamBold
+    b.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+    round(b, 5)
+    b.Parent = OptionsFrame
+    b.MouseButton1Click:Connect(function()
+        _sideStates[sideName] = not _sideStates[sideName]
+        b.BackgroundColor3 = _sideStates[sideName] and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(231, 76, 60)
+        updateStatusLabel()
+    end)
+end
+for _, s in ipairs(sidesOrdered) do createSideToggle(s) end
+
+local function rgbToHex(color)
+    return string.format("#%02x%02x%02x", math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255))
+end
+
+local function parseColor(text, default)
+    local r, g, b = text:match("(%d+),%s*(%d+),%s*(%d+)")
+    if r and g and b then return Color3.fromRGB(tonumber(r), tonumber(g), tonumber(b)) end
+    return default
+end
+
+local function getMouseTarget()
+    local mousePos = _userInput:GetMouseLocation()
+    local unitRay = _workspace.CurrentCamera:ViewportPointToRay(mousePos.X, mousePos.Y)
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+    raycastParams.FilterDescendantsInstances = {_LocalPlayer20.Character}
+    local result = _workspace:Raycast(unitRay.Origin, unitRay.Direction * 1000, raycastParams)
+    if result and result.Instance then return result.Instance, result.Position end
+    return nil, nil
+end
+
+_userInput.InputBegan:Connect(function(input, processed)
+    if not processed and _rainbowEnabled and input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local target, pos = getMouseTarget()
+        if target and not _paintTargets[target] then
+            _paintTargets[target] = pos
+        end
+    end
+end)
+
+local function runSpray(mode)
+    local char = _LocalPlayer20.Character
+    local brick = _replicated:FindFirstChild('Brick')
+    local tool = _LocalPlayer20.Backpack:FindFirstChild('Paint') or char:FindFirstChild('Paint')
+    if tool and char:FindFirstChild("HumanoidRootPart") then
+        local remote = tool:WaitForChild('Script'):WaitForChild('Event')
+        
+        if mode == "revert" then
+            remote:FireServer(brick, Enum.NormalId.Top, char.HumanoidRootPart.Position, "both \u{1F91D}", Color3.fromRGB(192, 192, 192), "plastic","")
+            task.wait(0.1)
+            remote:FireServer(brick, Enum.NormalId.Top, char.HumanoidRootPart.Position, "both \u{1F91D}", Color3.fromRGB(173, 172, 175), "spray", "")
+            task.wait(0.1)
+            remote:FireServer(brick, Enum.NormalId.Bottom, char.HumanoidRootPart.Position, "both \u{1F91D}", Color3.fromRGB(173, 172, 175), "spray", "")
+            task.wait(0.1)
+            remote:FireServer(brick, Enum.NormalId.Left, char.HumanoidRootPart.Position, "both \u{1F91D}", Color3.fromRGB(173, 172, 175), "spray", "")
+            task.wait(0.1)
+            remote:FireServer(brick, Enum.NormalId.Right, char.HumanoidRootPart.Position, "both \u{1F91D}", Color3.fromRGB(173, 172, 175), "spray", "")
+            task.wait(0.1)
+            remote:FireServer(brick, Enum.NormalId.Back, char.HumanoidRootPart.Position, "both \u{1F91D}", Color3.fromRGB(173, 172, 175), "spray", "")
+            task.wait(0.1)
+            remote:FireServer(brick, Enum.NormalId.Front, char.HumanoidRootPart.Position, "both \u{1F91D}", Color3.fromRGB(173, 172, 175), "spray", "")
+            if not brick.Anchored then
+                task.wait(0.1)
+                remote:FireServer(brick, Enum.NormalId.Top, char.HumanoidRootPart.Position, "material", Color3.fromRGB(173, 172, 175), "anchor", "")
+            end
+            if not brick.CanCollide then
+                task.wait(0.1)
+                remote:FireServer(brick, Enum.NormalId.Top, char.HumanoidRootPart.Position, "material", Color3.fromRGB(173, 172, 175), "collide", "")
+            end
+            return
+        end
+
+        if mode == "rainbow" then 
+            local rainbowCol = Color3.fromHSV(tick() * _rainbowSpeed % 1, 1, 1) 
+            for targetPart, hitPos in pairs(_paintTargets) do
+                if targetPart and targetPart.Parent then
+                    remote:FireServer(targetPart, "Front", hitPos, 'both \u{1f91d}', rainbowCol, "spray", " ")
+                    task.wait(0.04)
+                else
+                    _paintTargets[targetPart] = nil 
+                end
+            end
+            return
+        end
+
+        local blockCol = parseColor(ColorInput.Text, Color3.fromRGB(163, 162, 165))
+        local sprayCol = parseColor(SprayColorInput.Text, Color3.fromRGB(255, 255, 255))
+        local sprayHex = rgbToHex(sprayCol)
+        local textTable = string.split(InputBox.Text, ",")
+        local activeSides = {}
+        for _, s in ipairs(sidesOrdered) do if _sideStates[s] then table.insert(activeSides, s) end end
+        
+        if brick then
+            if mode == "anchor" or mode == "toxic" or mode == "plastic" or mode == "smooth" then
+                remote:FireServer(brick, "Front", brick.Position, 'both \u{1f91d}', blockCol, mode, " ")
+            else
+                for i, side in ipairs(activeSides) do
+                    local txt = textTable[i] or textTable[1] or " "
+                    txt = txt:gsub("^%s*(.-)%s*$", "%1")
+                    local taggedText = '<font color="'.. sprayHex ..'">' .. txt .. '</font>'
+                    remote:FireServer(brick, side, brick.Position, 'both \u{1f91d}', blockCol, "spray", taggedText)
+                    task.wait(_pingDelay)
+                end
+            end
+        end
+    end
+end
+
+_runService.Heartbeat:Connect(function()
+    local char = _LocalPlayer20.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+    local hum = char:FindFirstChild("Humanoid")
+    local myPos = hrp.Position
+    local brick = _replicated:FindFirstChild("Brick")
+
+    -- 1. INDEPENDENT COMMAND GRIEFING
+    if _CMD_GriefActive then
+        local delTool = char:FindFirstChild("Delete") or _LocalPlayer20.Backpack:FindFirstChild("Delete")
+        if delTool then
+            local event = delTool:FindFirstChild("Script") and delTool.Script:FindFirstChild("Event")
+            if event then
+                if _GriefMode == "G1" then
+                    if brick then event:FireServer(brick, myPos) end 
+                    if (tick() - _CMD_LastScan) >= _scanInterval then
+                        _CMD_LastScan = tick()
+                        for _, obj in pairs(_workspace:GetDescendants()) do
+                            if obj:IsA("BasePart") and obj.Name ~= "Terrain" and not obj:IsDescendantOf(char) and obj ~= brick then
+                                event:FireServer(obj, myPos) -- INF RANGE
+                            end
+                        end
+                    end
+                elseif _GriefMode == "G2" then
+                    local oldPos = hrp.CFrame
+                    local targets = {}
+                    for _, obj in pairs(_workspace:GetDescendants()) do
+                        if obj:IsA("BasePart") and obj.Name == "Brick" and not obj:IsDescendantOf(char) then table.insert(targets, obj) end
+                    end
+                    for i = 1, #targets do
+                        if not _CMD_GriefActive then break end
+                        local target = targets[i]
+                        if target and target.Parent then
+                            hrp.CFrame = target.CFrame
+                            task.wait(_GriefSpeed)
+                            event:FireServer(target, target.Position)
+                        end
+                    end
+                    _CMD_GriefActive = false
+                    hrp.CFrame = oldPos
+                end
+            end
+        end
+    end
+
+    -- 2. GUI FEATURES
+    if not _buildingDisabled then
+        local delTool = char:FindFirstChild("Delete") or _LocalPlayer20.Backpack:FindFirstChild("Delete")
+        if delTool and not _CMD_GriefActive then
+            local event = delTool:FindFirstChild("Script") and delTool.Script:FindFirstChild("Event")
+            if event then
+                if _breakBkitEnabled and brick then event:FireServer(brick, myPos) end
+                
+                if _deleteAuraEnabled and (tick() - _lastAuraScan) >= _scanInterval then
+                    _lastAuraScan = tick()
+                    local range = tonumber(RangeInput.Text) or 100
+                    for _, obj in pairs(_workspace:GetDescendants()) do
+                        if obj:IsA("BasePart") and obj.Name ~= "Terrain" and not obj:IsDescendantOf(char) and obj ~= brick then
+                            if (obj.Position - myPos).Magnitude <= range then 
+                                event:FireServer(obj, myPos)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        
+        if _unanchorAuraEnabled then
+            local bricksFolder = _workspace:FindFirstChild("Bricks")
+            local tool = char:FindFirstChild('Paint') or _LocalPlayer20.Backpack:FindFirstChild('Paint')
+            if bricksFolder and tool then
+                local remote = tool:WaitForChild('Script'):WaitForChild('Event')
+                local oldCFrame = hrp.CFrame
+                local range = tonumber(RangeInput.Text) or 100
+                for _, b in pairs(bricksFolder:GetChildren()) do
+                    if b:IsA("BasePart") and (b.Position - myPos).Magnitude <= range then
+                        hrp.CFrame = b.CFrame
+                        task.wait(0.04)
+                        remote:FireServer(b, "Front", b.Position, 'both \u{1f91d}', Color3.new(1,1,1), "anchor", " ")
+                        hrp.CFrame = oldCFrame
+                        task.wait(0.04)
+                    end
+                end
+            end
+        end
+        
+        if _rainbowEnabled then runSpray("rainbow") end
+    end
+
+    -- Misc
+    if _antiJailEnabled then
+        local jail = char:FindFirstChild("Jail")
+        if jail then jail:Destroy() end
+    end
+
+    if _autoRecoveryEnabled and hum and hum.Health <= 0 then
+        for _, tool in pairs(char:GetChildren()) do
+            if tool:IsA("Tool") then tool.Parent = _workspace end
+        end
+        for _, tool in pairs(_LocalPlayer20.Backpack:GetChildren()) do
+            if tool:IsA("Tool") then tool.Parent = _workspace end
+        end
+    end
+
+    if _autoSayEnabled and AutoSayInput.Text ~= "" then
+        local now = tick()
+        local d = tonumber(SayDelayInput.Text) or 5
+        if (now - _lastSay) >= d then
+            _lastSay = now
+            if _textChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+                local channel = _textChatService.TextChannels:FindFirstChild("RBXGeneral")
+                if channel then channel:SendAsync(AutoSayInput.Text) end
+            else
+                local sayEvent = _replicated:FindFirstChild("DefaultChatSystemChatEvents") and _replicated.DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest")
+                if sayEvent then sayEvent:FireServer(AutoSayInput.Text, "All") end
+            end
+        end
+    end
+
+    if hum and hum.Health > 0 and not char:FindFirstChild("Hielo") then _lastSafePos = hrp.CFrame end
+    if _antiFreezeEnabled and char:FindFirstChild("Hielo") and hum and hum.Health > 0 then
+        _shouldTeleportBack = true
+        hum.Health = 0
+    end
+end)
+
+_LocalPlayer20.CharacterAdded:Connect(function(newChar)
+    if _autoRecoveryEnabled then
+        task.wait(1.5) 
+        local hrp = newChar:WaitForChild("HumanoidRootPart", 10)
+        if hrp then
+            for _, tool in pairs(_workspace:GetChildren()) do
+                if tool:IsA("Tool") and tool:FindFirstChild("Handle") then
+                    firetouchinterest(hrp, tool.Handle, 0)
+                    firetouchinterest(hrp, tool.Handle, 1)
+                end
+            end
+        end
+    end
+end)
+
+
+
+
+
+UnanchorAuraBtn.MouseButton1Click:Connect(function()
+    _unanchorAuraEnabled = not _unanchorAuraEnabled
+    UnanchorAuraBtn.Text = _unanchorAuraEnabled and "Unanchor Aura (ON)" or "Unanchor Aura (OFF)"
+    UnanchorAuraBtn.BackgroundColor3 = _unanchorAuraEnabled and Color3.fromRGB(150, 0, 255) or Color3.fromRGB(75, 0, 130)
+end)
+
+AutoSayBtn.MouseButton1Click:Connect(function()
+    _autoSayEnabled = not _autoSayEnabled
+    AutoSayBtn.Text = _autoSayEnabled and "Auto-Say (ON)" or "Auto-Say (OFF)"
+    AutoSayBtn.BackgroundColor3 = _autoSayEnabled and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(30, 30, 30)
+end)
+
+AutoRecoveryBtn.MouseButton1Click:Connect(function()
+    _autoRecoveryEnabled = not _autoRecoveryEnabled
+    AutoRecoveryBtn.Text = _autoRecoveryEnabled and "Auto Recovery (ON)" or "Auto Recovery (OFF)"
+    AutoRecoveryBtn.BackgroundColor3 = _autoRecoveryEnabled and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(100, 100, 100)
+end)
+
+ResetButton.MouseButton1Click:Connect(function()
+    local char = _LocalPlayer20.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.Health = 0
+    end
+end)
+
+AntiJailBtn.MouseButton1Click:Connect(function()
+    _antiJailEnabled = not _antiJailEnabled
+    AntiJailBtn.Text = _antiJailEnabled and "Anti Jail (ON)" or "Anti Jail (OFF)"
+    AntiJailBtn.BackgroundColor3 = _antiJailEnabled and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(255, 165, 0)
+end)
+
+AntiFreezeBtn.MouseButton1Click:Connect(function()
+    _antiFreezeEnabled = not _antiFreezeEnabled
+    AntiFreezeBtn.Text = _antiFreezeEnabled and "Anti Freeze (ON)" or "Anti Freeze (OFF)"
+    AntiFreezeBtn.BackgroundColor3 = _antiFreezeEnabled and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(0, 150, 255)
+end)
+
+BreakBkitBtn.MouseButton1Click:Connect(function()
+    _breakBkitEnabled = not _breakBkitEnabled
+    BreakBkitBtn.Text = _breakBkitEnabled and "Breaking bkit (ON)" or "Break bkit (OFF)"
+    BreakBkitBtn.BackgroundColor3 = _breakBkitEnabled and Color3.fromRGB(231, 76, 60) or Color3.fromRGB(155, 89, 182)
+end)
+
+DeleteAuraBtn.MouseButton1Click:Connect(function()
+    _deleteAuraEnabled = not _deleteAuraEnabled
+    DeleteAuraBtn.Text = _deleteAuraEnabled and "Delete Aura (ON)" or "Delete Aura (OFF)"
+    DeleteAuraBtn.BackgroundColor3 = _deleteAuraEnabled and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(120, 0, 0)
+end)
+
+OptionsButton.MouseButton1Click:Connect(function() OptionsFrame.Visible = not OptionsFrame.Visible end)
+
+RainbowButton.MouseButton1Click:Connect(function() 
+    _rainbowEnabled = not _rainbowEnabled 
+    RainbowButton.Text = _rainbowEnabled and "Rainbow Mode: ON" or "Rainbow Mode: OFF" 
+    RainbowButton.BackgroundColor3 = _rainbowEnabled and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(30,30,30)
+end)
+
+ClearTargetsBtn.MouseButton1Click:Connect(function()
+    _paintTargets = {}
+end)
+
+ActionButton.MouseButton1Click:Connect(function() runSpray("set") end)
+ToxifyButton.MouseButton1Click:Connect(function() runSpray("toxic") end)
+AnchorButton.MouseButton1Click:Connect(function() runSpray("anchor") end)
+PlasticButton.MouseButton1Click:Connect(function() runSpray("plastic") end)
+SmoothButton.MouseButton1Click:Connect(function() runSpray("smooth") end)
+RevertButton.MouseButton1Click:Connect(function() runSpray("revert") end)
+
+updateStatusLabel()
+
+-- MOBILE TOGGLE
+local MobileToggle = Instance.new("TextButton")
+local ButtonStroke = Instance.new("UIStroke")
+
+MobileToggle.Name = "MobileToggle"
+MobileToggle.Parent = ScreenGui
+MobileToggle.Size = UDim2.new(0, 45, 0, 45)
+MobileToggle.Position = UDim2.new(0, 10, 0.5, -22)
+MobileToggle.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MobileToggle.BackgroundTransparency = 0.3
+MobileToggle.Text = "H"
+MobileToggle.TextColor3 = Color3.new(1, 1, 1)
+MobileToggle.Font = Enum.Font.GothamBold
+MobileToggle.TextSize = 18
+MobileToggle.Active = true
+round(MobileToggle, 100)
+
+ButtonStroke.Thickness = 2
+ButtonStroke.Color = Color3.fromRGB(0, 255, 255)
+ButtonStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+ButtonStroke.Parent = MobileToggle
+
+local dragToggle, dragStartT, startPosT
+MobileToggle.InputBegan:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+        dragToggle = true
+        dragStartT = input.Position
+        startPosT = MobileToggle.Position
+    end
+end)
+_userInput.InputChanged:Connect(function(input)
+    if dragToggle and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStartT
+        MobileToggle.Position = UDim2.new(startPosT.X.Scale, startPosT.X.Offset + delta.X, startPosT.Y.Scale, startPosT.Y.Offset + delta.Y)
+    end
+end)
+_userInput.InputEnded:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+        dragToggle = false
+    end
+end)
+
+MobileToggle.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
