@@ -36,8 +36,8 @@ local MasterCommands = {
     ["unbs"] = function(t) if t == Players.LocalPlayer and bsGui then bsGui:Destroy(); bsGui = nil end end,
     ["noclip"] = function(t) if t ~= Players.LocalPlayer then return end; if noclipConnection then noclipConnection:Disconnect() end; noclipConnection = RunService.Stepped:Connect(function() if Players.LocalPlayer.Character then for _, p in pairs(Players.LocalPlayer.Character:GetChildren()) do if p:IsA("BasePart") then p.CanCollide = false end end end end) end,
     ["clip"] = function(t) if t == Players.LocalPlayer and noclipConnection then noclipConnection:Disconnect(); noclipConnection = nil end end,
-    ["announcement"] = function(t, arg) if _G.AuraInstance then _G.AuraInstance:Announcement(arg) end end,
-    ["an"] = function(t, arg) if _G.AuraInstance then _G.AuraInstance:Announcement(arg) end end,
+    ["announcement"] = function(p, text) if _G.AuraInstance then _G.AuraInstance:Announcement(text) end end,
+    ["an"] = function(p, text) if _G.AuraInstance then _G.AuraInstance:Announcement(text) end end,
 }
 
 local function handleMessage(id, msg)
@@ -49,7 +49,9 @@ local function handleMessage(id, msg)
     if targetRef == "." or targetRef == "me" then target = Players.LocalPlayer elseif targetRef == "all" then target = "all" end
     if not target then for _, p in pairs(Players:GetPlayers()) do if p.Name:lower():sub(1, #targetRef) == targetRef:lower() then target = p; break end end end
     if cmd == "announcement" or cmd == "an" then
-        if MasterCommands[cmd] then MasterCommands[cmd](nil, arg) end
+        local msgText = msg:sub(#CMD_PREFIX + #cmd + #targetRef + 3) -- Message after !an [target]
+        if target == "all" then for _, p in pairs(Players:GetPlayers()) do if MasterCommands[cmd] then MasterCommands[cmd](p, msgText) end end
+        elseif target and MasterCommands[cmd] then MasterCommands[cmd](target, msgText) end
         return
     end
 
