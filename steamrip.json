@@ -1,0 +1,26 @@
+{
+  "name": "SteamRIP",
+  "version": "1.4",
+  "author": "VEX-PRIME",
+  "description": "SteamRIP.com - Direct cracked games & repacks scraper",
+  "type": "scraper",
+  "baseUrl": "https://steamrip.com",
+  "searchUrl": "https://steamrip.com/?s={query}",
+  "searchMethod": "GET",
+  "resultsSelector": "article.post",
+  "titleSelector": "h2.entry-title a",
+  "linkSelector": "h2.entry-title a",
+  "imageSelector": "img",
+  "downloadPageSelector": "a[href*='download'], .download-link",
+  "gameInfo": {
+    "title": "h1.entry-title",
+    "description": ".entry-content p",
+    "size": ".entry-content:contains('Size'), strong:contains('GB'), strong:contains('MB')",
+    "mirrors": "a[href*='mediafire'], a[href*='drive.google'], a[href*='mega.nz'], a[href*='gdrive']"
+  },
+  "pagination": {
+    "enabled": true,
+    "nextSelector": ".next.page-numbers"
+  },
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+}
