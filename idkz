@@ -127,7 +127,7 @@ Subtitle.Position = UDim2.new(0.46, 10, 0.55, 0)
 Subtitle.Size = UDim2.new(0.5, 0, 0.1, 0)
 Subtitle.BackgroundTransparency = 1
 Subtitle.Font = Enum.Font.Gotham
-Subtitle.Text = "by gojohdkaisenkt"
+Subtitle.Text = "by some bastard and deobf by fantaman"
 Subtitle.TextColor3 = Color3.fromRGB(200, 200, 200)
 Subtitle.TextTransparency = 1
 Subtitle.TextScaled = true
@@ -1082,7 +1082,7 @@ local function findBackdoor()
                 backdoorRemote = remote
                 
                 CreateNotification("Success!", "BACKDOOR FOUND! " .. timeTaken .. "s\n" .. remote:GetFullName(), "Success", 5)
-                runRemote(backdoorRemote, "a=Instance.new('Hint',workspace)while true do a.Text='Luau X SS V5.1 rework by gojohdkaisenkt|faster and free' b=1,1 do a.Parent=workspace;wait(1)a.Parent=workspace;wait(0.5)end;wait(60)end")
+                runRemote(backdoorRemote, "a=Instance.new('Hint',workspace)while true do a.Text='Luau X SS V5.1 rework by some fucking bastard and deobf by |faster and free' b=1,1 do a.Parent=workspace;wait(1)a.Parent=workspace;wait(0.5)end;wait(60)end")
                 return true
             end
         end
@@ -1378,7 +1378,7 @@ local p = Instance.new("TextLabel")
 p.Size = UDim2.new(1, -10, 0, 25)
 p.AutomaticSize = Enum.AutomaticSize.Y
 p.BackgroundTransparency = 1
-p.Text = "i'm sorry admin it's not finished yet because i'm quite lazy and have to release it very soon so it's not finished yet i will try my best to finish it, thanks for using it :)\n\n-gojohdkaisenkt"
+p.Text = "i'm sorry admin it's not finished yet because i'm quite lazy and have to release it very soon so it's not finished yet i will try my best to finish it, thanks for using it :)\n\n-bastard"
 p.Font = Enum.Font.Gotham
 p.TextSize = 18
 p.TextColor3 = Color3.fromRGB(200, 200, 200)
